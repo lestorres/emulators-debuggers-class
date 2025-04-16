@@ -1,7 +1,5 @@
-# emulators-debuggers-class
-A practical introduction to emulators and debuggers for embedded systems development
+# Emuladores y Depuradores para Sistemas Embebidos
 
-# 🧰 Emuladores y Depuradores para Sistemas Embebidos
 Repositorio con recursos y apuntes sobre el uso de **emuladores y depuradores open source** en el desarrollo de sistemas embebidos.
 
 ---
@@ -16,7 +14,7 @@ Repositorio con recursos y apuntes sobre el uso de **emuladores y depuradores op
   - [2.1 GDB (GNU Debugger)](#21-gdb-gnu-debugger)
   - [2.2 OpenOCD](#22-openocd)
   - [2.3 Otros depuradores (solo mención)](#23-otros-depuradores-solo-mención)
-- [3. Casos de uso en la industria](#3-casos-de-uso-en-la-industria)
+  - [2.4 Casos de uso para distintos escenarios](#24-casos-de-uso-para-distintos-escenarios)
 
 ---
 
@@ -42,7 +40,7 @@ Repositorio con recursos y apuntes sobre el uso de **emuladores y depuradores op
 
 ---
 
-### 1.3 Otros emuladores por fabricante (solo mención)
+### 1.3 Otros emuladores por fabricante
 
 - **Esp32-emulator** – Experimental para ESP32.  
 - **SimAVR** – Para microcontroladores AVR.  
@@ -76,7 +74,7 @@ Repositorio con recursos y apuntes sobre el uso de **emuladores y depuradores op
 
 ---
 
-### 2.4 Casos de uso de los debbugers
+### 2.4 Casos de uso para distintos escenarios
 
 | Caso de uso                    | Herramientas comunes             |
 |-------------------------------|----------------------------------|
