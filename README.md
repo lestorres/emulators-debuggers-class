@@ -30,10 +30,13 @@ Este documento se centra en el uso de herramientas **open source** como emulador
 
 ### 1.1 QEMU
 
-- Emulador versátil y modular que soporta múltiples arquitecturas: ARM, x86, MIPS, RISC-V.
-- Permite emulación completa de sistemas, ideal para testing y CI/CD.
-- Compatible con `gdbserver` para depuración remota.
-- Utilizado en entornos de desarrollo sin acceso inmediato a hardware real.
+QEMU (Quick Emulator) es un emulador y virtualizador de código abierto, versátil y modular, que soporta múltiples arquitecturas como ARM, x86, MIPS y RISC-V. Se utiliza principalmente de dos maneras:
+
+- **Emulación de Sistema**: QEMU emula una máquina completa, permitiendo ejecutar un sistema operativo invitado. En este modo, la CPU puede ser completamente emulada o usar un hipervisor como KVM (Kernel-based Virtual Machine) para ejecutar directamente sobre el CPU del host. Este modo es ideal para testing  ya que permite emular sistemas completos sin necesidad de hardware real.
+
+- **Emulación en Modo Usuario**: QEMU permite ejecutar programas compilados para una arquitectura de CPU diferente en otra, emulando siempre la CPU.
+
+Además, QEMU es compatible con **gdbserver** para depuración remota, lo que facilita el desarrollo y la depuración en entornos sin acceso inmediato a hardware físico. Además herramientas como **qemu-img** para crear y modificar imágenes de disco.
 
 🔗 [Documentación oficial de QEMU](https://www.qemu.org/docs/master/)  
 🔗 [Repositorio en GitLab](https://gitlab.com/qemu-project/qemu)
@@ -52,9 +55,13 @@ Este documento se centra en el uso de herramientas **open source** como emulador
 
 ### 2.1 GDB (GNU Debugger)
 
-- Depurador estándar para programas C/C++ y otros lenguajes en entornos embebidos.
-- Admite depuración remota, breakpoints, inspección de memoria y registros.
-- Puede conectarse a emuladores como QEMU o a hardware real mediante OpenOCD.
+GDB es el depurador estándar para programas escritos en lenguajes como C, C++ , Assembler y otros, especialmente en entornos embebidos. Se utiliza para identificar y corregir errores en el código, permitiendo a los desarrolladores analizar el comportamiento de sus programas en tiempo real. Entre sus funciones permite:
+
+- **Depuración Remota**: GDB soporta depuración remota, lo que permite depurar aplicaciones en sistemas que no tienen acceso directo al entorno de desarrollo, como dispositivos embebidos o máquinas virtuales.
+
+- **Breakpoints y Seguimiento**: GDB permite establecer puntos de interrupción (breakpoints) para detener la ejecución del programa en lugares específicos, inspeccionar la memoria, los registros y el estado del programa en cualquier momento durante su ejecución.
+
+- **Conexión a Emuladores y Hardware Real**: GDB se puede conectar a emuladores como QEMU o a hardware real a través de herramientas como OpenOCD, lo que lo hace útil para trabajar en sistemas sin acceso directo al código fuente o cuando se trabaja con plataformas de hardware especializadas.
 
 🔗 [Sitio oficial de GDB](https://www.sourceware.org/gdb/)  
 🔗 [Repositorio oficial](https://sourceware.org/git/binutils-gdb.git)
@@ -104,7 +111,7 @@ Esta sección te guiará a través de un ejemplo práctico utilizando **QEMU + G
 
 ## 5. Tutorial
 
-Este tutorial proporciona una guía detallada para:
+Este tutorial proporciona una guía detallada:
 
 1. **Instalar herramientas necesarias**:
    - Instalar QEMU, GDB y otros programas necesarios en tu sistema operativo.
