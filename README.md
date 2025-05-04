@@ -20,7 +20,7 @@
 
 Los sistemas embebidos están presentes en una gran variedad de dispositivos, desde electrodomésticos hasta automóviles y dispositivos médicos. Sin embargo, desarrollar y depurar estos sistemas puede ser complejo debido a las limitaciones de hardware, las restricciones de recursos y la falta de acceso directo a plataformas físicas en etapas tempranas de desarrollo. 
 
-Este documento se centra en el uso de herramientas **open source** como emuladores y depuradores, las cuales permiten simular y depurar sistemas sin la necesidad de contar con hardware físico durante el proceso de desarrollo.
+Esta guía se centra en el uso de herramientas **open source** como emuladores y depuradores, las cuales permiten simular y depurar sistemas sin la necesidad de contar con hardware físico durante el proceso de desarrollo.
 
 ## Conceptos básicos
 
@@ -45,29 +45,27 @@ Este documento se centra en el uso de herramientas **open source** como emulador
 - **Emulación**: útil para **pruebas funcionales, depuración y validación sin hardware**.
 
 
-
 ## Modelos y pruebas avanzadas
 
 - **Hardware-in-the-Loop (HIL)**: Pruebas con hardware real o parcialmente simulado.
+  > Ejemplo: Probar un firmware en una placa real conectada a un modelo simulado de sensores.
 - **Gemelo Digital (Digital Twin)**: Réplica virtual del sistema físico usada para pruebas y validaciones.
+  > Ejemplo: Un gemelo digital de un motor industrial permite ajustar parámetros sin detener la producción.
 
 
 ## Prácticas industriales 
 
 | Tema                              | Relevancia                                                                 |
 |-----------------------------------|----------------------------------------------------------------------------|
-| Toolchains cruzadas               | Compilar/depurar desde PC para microcontroladores o sistemas embebidos.   |
-| Scripts de GDB (.gdbinit)         | Automatización de secuencias de depuración.                               |
-| CI/CD con QEMU + GDB              | Pruebas de firmware sin hardware real.                                    |
-| Interfaces JTAG/SWD               | Depuración física de MCUs y SoCs.                                         |
-| Trazas (ej. Tracealyzer, ITM)     | Análisis de ejecución y tiempos en tiempo real.                           |
-| Logs vs Breakpoints               | Logs útiles en producción; breakpoints en desarrollo.                     |
-| Optimización vs Depuración        | Uso de flags como `-Og` para depurar código optimizado.                   |
+| Toolchains cruzadas               | Compilar/depurar desde PC para microcontroladores o sistemas embebidos objetivo. |
+| Scripts de GDB (.gdbinit)         | Automatizar flujos repetitivos en debugging, ya sea hacerlos o usarlos.    |
+| CI/CD con QEMU + GDB              | Pruebas de firmware sin hardware real.                                     |
+| Interfaces JTAG/SWD               | Depuración física de microcontroladores (MCUs y SoCs).                     |
+| Trazas (ej. Tracealyzer, ITM)     | Análisis de eventos y tiempos en RTOS o sistemas críticos.                 |
+| Breakpoints                       | Breakpoints en desarrollo, son puntos claves del codigo para analizar.     |
+| Optimización vs Depuración        | Uso de flags como `-Og` para depurar código optimizado, es decur, saber cómo las optimizaciones afectan la visibilidad del código al depurar.|
 | Análisis post-mortem (core dumps) | Inspección de fallos ya ocurridos.                                        |
-| Protección del puerto de debug    | Recomendado en firmware de producción para evitar ataques.                |
 
-
----
 
 ## 1. Emuladores
 
