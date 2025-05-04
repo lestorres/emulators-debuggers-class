@@ -7,14 +7,12 @@
 - [0. Introducción](#0-introducción)
 - [1. Emuladores](#1-emuladores)
   - [1.1 QEMU](#11-qemu)
-  - [1.2 Otros emuladores para explorar](#12-otros-emuladores-para-explorar)
 - [2. Depuradores](#2-depuradores)
   - [2.1 GDB (GNU Debugger)](#21-gdb-gnu-debugger)
-  - [2.2 Otros depuradores para explorar](#22-otros-depuradores-para-explorar)
-- [3. Casos de uso comunes](#3-casos-de-uso-comunes)
-- [4. Demostración práctica](#4-demostración-práctica)
-- [5. Tutorial](#5-tutorial)
-- [6. Referencias](#6-referencias)
+  - [2.2 PDB (Python Debugger)](#22-pdb-python-debugger)
+- [3. Demostración práctica](#3-demostración-práctica)
+- [4. Tutorial](#4-tutorial)
+- [6. Referencias](#5-referencias)
 
 ---
 
@@ -23,6 +21,51 @@
 Los sistemas embebidos están presentes en una gran variedad de dispositivos, desde electrodomésticos hasta automóviles y dispositivos médicos. Sin embargo, desarrollar y depurar estos sistemas puede ser complejo debido a las limitaciones de hardware, las restricciones de recursos y la falta de acceso directo a plataformas físicas en etapas tempranas de desarrollo. 
 
 Este documento se centra en el uso de herramientas **open source** como emuladores y depuradores, las cuales permiten simular y depurar sistemas sin la necesidad de contar con hardware físico durante el proceso de desarrollo.
+
+## Conceptos básicos
+
+###  Simulación, emulación y depuración
+
+| Término     | Descripción                                                                 |
+|-------------|-----------------------------------------------------------------------------|
+| Simulación  | Ejecuta una representación del sistema, sin correr binarios reales.         |
+| Emulación   | Ejecuta binarios como si estuvieran en el hardware objetivo (ej. QEMU).     |
+| Depuración  | Permite observar, controlar y modificar la ejecución de código en tiempo real.|
+
+
+### ¿Qué se espera de una Simulación y de una Emulación?
+
+| Tipo        | ¿Qué se espera?                                                                 | Ejemplo concreto                                                |
+|-------------|----------------------------------------------------------------------------------|-----------------------------------------------------------------|
+| **Simulación** | Comportamiento lógico o funcional del sistema, sin ejecutar el código real.     | Simular un sensor de temperatura en MATLAB o un microcontrolador en SystemVerilog.          |
+| **Emulación**  | Ejecutar el binario tal como lo haría el hardware real, con tiempos y entorno cercanos al físico. | Usar QEMU para correr una imagen de Linux ARM en tu PC o emular un microcontrolador STM32 para probar firmware.        |
+
+### Diferencia clave:
+- **Simulación**: útil para **diseño y validación temprana**.
+- **Emulación**: útil para **pruebas funcionales, depuración y validación sin hardware**.
+
+
+
+## Modelos y pruebas avanzadas
+
+- **Hardware-in-the-Loop (HIL)**: Pruebas con hardware real o parcialmente simulado.
+- **Gemelo Digital (Digital Twin)**: Réplica virtual del sistema físico usada para pruebas y validaciones.
+
+
+## Prácticas industriales 
+
+| Tema                              | Relevancia                                                                 |
+|-----------------------------------|----------------------------------------------------------------------------|
+| Toolchains cruzadas               | Compilar/depurar desde PC para microcontroladores o sistemas embebidos.   |
+| Scripts de GDB (.gdbinit)         | Automatización de secuencias de depuración.                               |
+| CI/CD con QEMU + GDB              | Pruebas de firmware sin hardware real.                                    |
+| Interfaces JTAG/SWD               | Depuración física de MCUs y SoCs.                                         |
+| Trazas (ej. Tracealyzer, ITM)     | Análisis de ejecución y tiempos en tiempo real.                           |
+| Logs vs Breakpoints               | Logs útiles en producción; breakpoints en desarrollo.                     |
+| Optimización vs Depuración        | Uso de flags como `-Og` para depurar código optimizado.                   |
+| Análisis post-mortem (core dumps) | Inspección de fallos ya ocurridos.                                        |
+| Protección del puerto de debug    | Recomendado en firmware de producción para evitar ataques.                |
+
 
 ---
 
@@ -41,7 +84,7 @@ Además, QEMU es compatible con **gdbserver** para depuración remota, lo que fa
 🔗 [Documentación oficial de QEMU](https://www.qemu.org/docs/master/)  
 🔗 [Repositorio en GitLab](https://gitlab.com/qemu-project/qemu)
 
-### 1.2 Otros emuladores para explorar
+### Otros emuladores para explorar
 
 - **Renode** – Emulador especializado en sistemas embebidos con buses y sensores. Ideal para pruebas de RTOS y simulaciones deterministas.
 - **Esp32-emulator** – Para plataformas ESP32, útil en desarrollo de IoT.
@@ -66,7 +109,11 @@ GDB es el depurador estándar para programas escritos en lenguajes como C, C++ ,
 🔗 [Sitio oficial de GDB](https://www.sourceware.org/gdb/)  
 🔗 [Repositorio oficial](https://sourceware.org/git/binutils-gdb.git)
 
-### 2.2 Otros depuradores para explorar
+
+### 2.2 PDB (Python Debugger)
+
+
+### Otros depuradores para explorar
 
 - **OpenOCD** – Conexión entre GDB y hardware físico mediante JTAG/SWD. Compatible con diversas plataformas como ARM y RISC-V.
 - **pyOCD** – Depurador basado en Python para plataformas ARM Cortex-M, compatible con CMSIS-DAP.
@@ -76,18 +123,21 @@ GDB es el depurador estándar para programas escritos en lenguajes como C, C++ ,
 
 ---
 
-## 3. Casos de uso comunes
+## Casos de uso comunes
 
-| Escenario                     | Herramientas principales   |
-|------------------------------|----------------------------|
-| MCU bare-metal               | GDB + OpenOCD              |
-| Linux embebido               | QEMU + GDB (gdbserver)     |
-| RTOS sobre MCU               | GDB                        |
-| CI/CD para firmware          | QEMU + GDB                 |
+| Escenario                        | Herramientas principales             |
+|----------------------------------|--------------------------------------|
+| MCU bare-metal                   | GDB + OpenOCD                        |
+| Linux embebido                   | QEMU + GDB (gdbserver)               |
+| RTOS sobre MCU                   | GDB                                  |
+| CI/CD para firmware              | QEMU + GDB                           |
+| Scripts Python en consola        | `pdb`                                |
+| Aplicaciones Python medianas     | `pdb` + `breakpoint()`               |
+| Pruebas automatizadas en Python | `pytest` + `pdb`                     |
+| Debug en notebooks interactivos  | `ipdb`, `%debug` (IPython/Jupyter)  |
 
----
 
-## 4. Demostración práctica
+## 3. Demostración práctica
 
 Esta sección te guiará a través de un ejemplo práctico utilizando **QEMU + GDB** para emular y depurar un programa simple en un entorno embebido.
 
@@ -109,7 +159,7 @@ Esta sección te guiará a través de un ejemplo práctico utilizando **QEMU + G
 
 ---
 
-## 5. Tutorial
+## 4. Tutorial
 
 Este tutorial proporciona una guía detallada:
 
@@ -127,7 +177,7 @@ Este tutorial proporciona una guía detallada:
 
 ---
 
-## 6. Referencias
+## 5. Referencias
 
 [1] QEMU Project. “QEMU: A generic and open source machine emulator and virtualizer,” GitLab repository. [Online]. Available: https://gitlab.com/qemu-project/qemu
 
