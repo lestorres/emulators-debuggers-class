@@ -151,25 +151,24 @@ Características principales:
 
 ## 3. Demostración práctica
 
-Esta demostración busca guiar a través de un ejemplo práctico utilizando **QEMU + Python** para emular y depurar un programa simple en un entorno embebido de Raspberry Pi OS Lite based on Debian12 (bookworm), pero en modo **shell root** directamente, sin pasar por **systemd**.
+Esta demostración busca guiar a través de un ejemplo práctico utilizando **QEMU + Python** para emular  un programa simple en un entorno embebido de Raspberry Pi OS Lite based on Debian12 (bookworm), pero en modo **shell root** directamente, sin pasar por **systemd**.
 
-### Pasos a seguir:
+## Parte I: Emulación de Raspberry Pi OS Lite con QEMU en Modo Shell Root
+### ✅ Requisitos
 
-1. **Instalación de herramientas**:
-   - Instalar QEMU y GDB en tu máquina local.
-   
-2. **Compilación del programa**:
-   - Usar `gcc` o `clang` para compilar un programa en C que se pueda ejecutar en la arquitectura que estás emulando (por ejemplo, ARM o RISC-V).
+- Ubuntu Linux (20.04 o superior)
+- QEMU instalado (Se instala en esta guía y en el tutorial)
+- Imagen `.img` de Raspberry Pi OS Lite ( `2024-11-19-raspios-bookworm-armhf-lite.img`)
+- Kernel compatible para QEMU ( `kernel-qemu-4.19.50-buster`, ya includo en el repositorio)
+- Archivo `.dtb` compatible (`versatile-pb.dtb`, ya includo en el repositorio)
 
-3. **Emulación con QEMU**:
-   - Ejecutar QEMU con la imagen compilada.
-   - Iniciar el emulador con parámetros adecuados para permitir la conexión remota de GDB.
+### 🔧 Instalación de QEMU
 
-4. **Depuración remota con GDB**:
-   - Conectar GDB a QEMU usando `gdbserver`.
-   - Establecer breakpoints y examinar registros y memoria.
+```bash
+sudo apt update
+sudo apt install qemu-system-arm qemu-efi
+```
 
----
 
 ## 4. Tutorial
 
