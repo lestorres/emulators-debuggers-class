@@ -151,7 +151,7 @@ Características principales:
 
 ## 3. Demostración práctica
 
-Esta sección te guiará a través de un ejemplo práctico utilizando **QEMU + GDB** para emular y depurar un programa simple en un entorno embebido.
+Esta demostración busca guiar a través de un ejemplo práctico utilizando **QEMU + Python** para emular y depurar un programa simple en un entorno embebido de Raspberry Pi OS Lite based on Debian12 (bookworm), pero en modo **shell root** directamente, sin pasar por **systemd**.
 
 ### Pasos a seguir:
 
