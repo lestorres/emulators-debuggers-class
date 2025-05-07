@@ -183,6 +183,25 @@ Esta demostración busca guiar a través de un ejemplo práctico utilizando **QE
 - Kernel compatible para QEMU ( `kernel-qemu-4.19.50-buster`, ya includo en el repositorio)
 - Archivo `.dtb` compatible (`versatile-pb.dtb`, ya includo en el repositorio)
 
+
+### 🛠️ Hardware por Emular (Target)
+La siguiente tabla describe el hardware virtual que se emulará con QEMU para correr una imagen ligera de Raspberry Pi OS en un entorno completamente controlado:
+
+| Componente          | Descripción del Componente Emulado                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 🧠 `-cpu arm1176`   | Procesador **ARM1176JZF-S**, el mismo que utiliza la Raspberry Pi modelo 1. Soporta ARMv6 con MMU (gestión de memoria) y FPU.         |
+| 💾 `-m 256`         | Memoria RAM de **256 MB**, suficiente para sistemas embebidos ligeros como Raspberry Pi OS Lite.                                      |
+| 📦 `-M versatilepb` | Placa base virtual **Versatile Platform Baseboard**, una plataforma de referencia ampliamente soportada por QEMU para entornos ARM.   |
+| 📀 `-hda`           | Disco duro virtual que contiene la imagen del sistema operativo: **Raspberry Pi OS Lite basado en Debian 12 (Bookworm)**.             |
+| 🧬 `-dtb`           | **Device Tree Blob** que informa al sistema operativo de las características del hardware virtual (`versatile-pb.dtb`).               |
+| 🐧 `-kernel`        | Kernel Linux precompilado, ajustado para funcionar sobre la arquitectura y periféricos del sistema emulado (no usa el kernel de RPi). |
+| 🔡 `-serial stdio`  | Redirección del **puerto serie** a la terminal de la máquina host, permitiendo interacción por consola con el sistema emulado.        |
+| 🔧 `-append`        | Parámetros de arranque: monta `/dev/sda2` como sistema raíz, usa `ext4`, y lanza directamente el **shell** (`/bin/sh`) sin `systemd`. |
+| 🔁 `-no-reboot`     | Previene reinicios automáticos tras errores, ideal para tareas de depuración o análisis de bajo nivel.                                |
+                                 
+
+
+
 ### Paso 1: Desde una terminal se deben instalar los siguientes paquetes:
 ```bash
 sudo apt update
@@ -316,6 +335,10 @@ Estos parámetros tienen un significado que configuran al dispositivo a emular.
 -append "root=/dev/sda2 rootfstype=ext4 rw console=ttyAMA0"
 ```
 
+
+
+
+
 ## Paso 5: A emular
 
 Primero se le deben dar permisos al ejecutable `run-qemu.sh`.
@@ -413,6 +436,25 @@ Asegúrate de contar con lo siguiente:
 > 📝 **Nota importante**: Para el documento a entregar, **toma una captura de pantalla** al finalizar cada paso y colócala en el documento de plantilla adjunto.
 
 ---
+
+### 🛠️ Hardware por Emular (Target)
+La siguiente tabla describe el hardware virtual que se emulará con QEMU para correr una imagen ligera de Raspberry Pi OS en un entorno completamente controlado:
+
+| Componente          | Descripción del Componente Emulado                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 🧠 `-cpu arm1176`   | Procesador **ARM1176JZF-S**, el mismo que utiliza la Raspberry Pi modelo 1. Soporta ARMv6 con MMU (gestión de memoria) y FPU.         |
+| 💾 `-m 256`         | Memoria RAM de **256 MB**, suficiente para sistemas embebidos ligeros como Raspberry Pi OS Lite.                                      |
+| 📦 `-M versatilepb` | Placa base virtual **Versatile Platform Baseboard**, una plataforma de referencia ampliamente soportada por QEMU para entornos ARM.   |
+| 📀 `-hda`           | Disco duro virtual que contiene la imagen del sistema operativo: **Raspberry Pi OS Lite basado en Debian 12 (Bookworm)**.             |
+| 🧬 `-dtb`           | **Device Tree Blob** que informa al sistema operativo de las características del hardware virtual (`versatile-pb.dtb`).               |
+| 🐧 `-kernel`        | Kernel Linux precompilado, ajustado para funcionar sobre la arquitectura y periféricos del sistema emulado (no usa el kernel de RPi). |
+| 🔡 `-serial stdio`  | Redirección del **puerto serie** a la terminal de la máquina host, permitiendo interacción por consola con el sistema emulado.        |
+| 🔧 `-append`        | Parámetros de arranque: monta `/dev/sda2` como sistema raíz, usa `ext4`, y lanza directamente el **shell** (`/bin/sh`) sin `systemd`. |
+| 🔁 `-no-reboot`     | Previene reinicios automáticos tras errores, ideal para tareas de depuración o análisis de bajo nivel.                                |
+                                 
+
+
+
 
 ### 🔧 Paso 1: Instalar herramientas necesarias
 
