@@ -129,7 +129,6 @@ GDB es el depurador estándar para programas escritos en lenguajes como C, C++ ,
 </p>
 
 
-
 **PDB** es el depurador estándar incluido en Python, utilizado para diagnosticar y comprender el comportamiento de un programa durante su ejecución. Su funcionamiento se basa en una interfaz interactiva que permite examinar el estado interno del programa paso a paso [3].
 PDB resulta especialmente útil para depurar scripts que interactúan con hardware, dispositivos periféricos o procesos concurrentes. Dado que muchos entornos embebidos carecen de interfaces gráficas, PDB proporciona una herramienta efectiva directamente desde la terminal [4].
 
@@ -142,7 +141,6 @@ Características principales:
 
 🔗 [Documentación oficial](https://docs.python.org/3/library/pdb.html)  
 📦 [Código fuente](https://github.com/python/cpython/blob/main/Lib/pdb.py)
-
 
 
 ### Otros depuradores para explorar
@@ -171,6 +169,9 @@ Características principales:
 ## 3. Demostración práctica
 
 Esta demostración busca guiar a través de un ejemplo práctico utilizando **QEMU + Python** para emular  un programa simple en un entorno embebido de Raspberry Pi OS Lite based on Debian12 (bookworm), pero en modo **shell root** directamente, sin pasar por **systemd**.
+> **Nota**: `systemd` es un sistema de inicio y gestión de servicios en Linux.  
+> Se encarga de arrancar todos los procesos del sistema (como redes, usuarios, etc.) después del kernel.  
+> En este tutorial lo evitamos para entrar directamente a un **modo shell root minimalista**, ideal para pruebas rápidas, desarrollo embebido y debugging sin interferencias.
 
 ## Parte I: Emulación de Raspberry Pi OS Lite con QEMU en Modo Shell Root
 ### ✅ Prerequisitos
@@ -452,7 +453,7 @@ emulators-debuggers-class/
                      └── versatile-pb.dtb
 ```
 
-A nivel de la demostración, nos vamos a enfocar en el directorio `tutorial`. 
+A nivel de este tutorial guía, nos vamos a enfocar en el directorio `tutorial`. 
 
 ```
 emulators-debuggers-class/
@@ -470,7 +471,7 @@ emulators-debuggers-class/
 ## Paso 3: Instalar la imagen de Raspberry Pi OS Lite
 
 Para poder emular el sistema operativo de Raspberry Pi, es necesario descargar la imagen del sistema. Esta puede obtenerse desde la página oficial de Raspberry Pi. La versión más reciente al momento de esta guía es: `2024-11-19-raspios-bookworm-armhf-lite.img`.
-Alternativamente, se puede descargar de manera manual en la pagina oficial de `Raspberry Pi` dentro del directorio `emulators-debuggers-class/demo/qemu` o mediante una terminal. 
+Alternativamente, se puede descargar de manera manual en la pagina oficial de `Raspberry Pi` dentro del directorio `emulators-debuggers-class/tutorial/qemu` o mediante una terminal. 
 
 🔗 [Descargar desde la página oficial](https://www.raspberrypi.com/software/operating-systems/)
 
@@ -480,9 +481,9 @@ Alternativamente, se puede descargar de manera manual en la pagina oficial de `R
 
 🔗 Mediante una terminal 
 
-Se debe ingresar dentro del directorio demo/qemu
+Se debe ingresar dentro del directorio `tutorial/qemu`
 ```bash
-cd ~/emulators-debuggers-class/demo/qemu
+cd ~/emulators-debuggers-class/tutorial/qemu
 ```
 
 Luego instalar y descomprimir la imagen (puede tardar un poco, dependiendo de la conexion de internet)
@@ -493,7 +494,7 @@ xz -dk 2024-11-19-raspios-bookworm-arm64-lite.img.xz
 
 ## Paso 4: Verificar instalaciones antes de la emulación
 
-Para este punto dentro del directorio `emulators-debuggers-class/demo/qemu` debería contener:
+Para este punto dentro del directorio `emulators-debuggers-class/tutorial/qemu` debería contener:
 
 ```plaintext
 total 2249372
@@ -506,12 +507,12 @@ total 2249372
 Se puede verificar mediante este comando:
 
 ```bash
-ls -ls ~/emulators-debuggers-class/demo/qemu
+ls -ls ~/emulators-debuggers-class/tutorial/qemu
 ```
 
 Otro aspecto **importante** que se debe ver es el contenido de `run-qemu.sh`, este contiene toda la configuración necesaria para emular el sistema Raspberry OS Lite con Qemu.
 
-Al hacer `cat` a `run-qemu.sh` dentro del directorio `~/emulators-debuggers-class/demo/qemu`
+Al hacer `cat` a `run-qemu.sh` dentro del directorio `~/emulators-debuggers-class/tutorial/qemu`
 
 ```bash
 cat run-qemu.sh
@@ -544,13 +545,6 @@ Estos parámetros tienen un significado que configuran al dispositivo a emular.
 | `-append`        | Parámetros pasados al kernel: define la raíz del sistema, el tipo de sistema de archivos, la consola, y arranca directamente en una shell (`/bin/sh`). |
 | `-hda`           | Imagen del sistema Raspberry Pi OS Lite que se monta como disco principal.                                                                             |
 
-
-**Nota**: La imagen utilizada (2024-11-19-raspios-bookworm-armhf-lite.img) en este entorno inicia en modo shell (init=/bin/sh), útil para debugging o configuraciones avanzadas. Para arrancar el sistema completo, puedes cambiar esa línea por:
-
-```plaintext
--append "root=/dev/sda2 rootfstype=ext4 rw console=ttyAMA0"
-```
-
 ## Paso 5: A emular
 
 Primero se le deben dar permisos al ejecutable `run-qemu.sh`.
@@ -570,7 +564,6 @@ Se debería desplegar una ventana como esta,
 </p>
 
 Pero lo importante está en la terminal, esta versión de Raspberry OS no cuenta con interfaz gráfica, pero si con Python, G++ y GDB integrados. 
-
 
 ## Paso 6: Programar dentro de la Emulación
 
