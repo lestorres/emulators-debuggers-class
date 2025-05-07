@@ -90,7 +90,6 @@ Además, QEMU es compatible con **gdbserver** para depuración remota, lo que fa
 - **MSPDebug** – Emulador y depurador para microcontroladores MSP430 de Texas Instruments.
 - **PicSimLab / SimulIDE** – Emuladores educativos para microcontroladores PIC y AVR, fáciles de usar para iniciarse en la programación de microcontroladores.
 
----
 
 ## 2. Depuradores
 
@@ -123,7 +122,7 @@ Características principales:
 🔗 [Documentación oficial](https://docs.python.org/3/library/pdb.html)  
 📦 [Código fuente](https://github.com/python/cpython/blob/main/Lib/pdb.py)
 
----
+
 
 ### Otros depuradores para explorar
 
@@ -133,7 +132,6 @@ Características principales:
 - **GDBserver** – Usado para depuración remota en sistemas Linux embebidos, trabajando junto con QEMU.
 - **Tracealyzer** – Herramienta de análisis y depuración para sistemas con RTOS, ideal para estudiar la ejecución de software en plataformas embebidas.
 
----
 
 ## Casos de uso comunes de uso
 
@@ -148,13 +146,13 @@ Características principales:
 | Pruebas automatizadas en Python  | `pytest` + `pdb`                     |
 | Debug en notebooks interactivos  | `ipdb`, `%debug` (IPython/Jupyter)   |
 
-
+---
 ## 3. Demostración práctica
 
 Esta demostración busca guiar a través de un ejemplo práctico utilizando **QEMU + Python** para emular  un programa simple en un entorno embebido de Raspberry Pi OS Lite based on Debian12 (bookworm), pero en modo **shell root** directamente, sin pasar por **systemd**.
 
 ## Parte I: Emulación de Raspberry Pi OS Lite con QEMU en Modo Shell Root
-### ✅ Requisitos
+### ✅ Prerequisitos
 
 - Ubuntu Linux (20.04 o superior)
 - Git
@@ -163,16 +161,20 @@ Esta demostración busca guiar a través de un ejemplo práctico utilizando **QE
 - Kernel compatible para QEMU ( `kernel-qemu-4.19.50-buster`, ya includo en el repositorio)
 - Archivo `.dtb` compatible (`versatile-pb.dtb`, ya includo en el repositorio)
 
-### Paso 1: Desde una terminal se deben instalar los siguiente paquetes:
+### Paso 1: Desde una terminal se deben instalar los siguientes paquetes:
 ```bash
 sudo apt update
 sudo apt install qemu-system-arm qemu-efi
 sudo apt install python3
 ```
-### Paso 2: Clonar el Repositorio `emulators-debuggers-class`..
+### Paso 2: Clonar el Repositorio `emulators-debuggers-class`.
 El repositorio completo contiene la siguiente estructura: 
 ```
 emulators-debuggers-class/
+  ├── diagnostic/
+  │   ├── arbol
+  │   ├── arbol.cpp
+  │   └── solucion/
   ├── demo/
   │   ├── pdb/
   │   │   ├── pyfetch.py
@@ -182,36 +184,57 @@ emulators-debuggers-class/
   │       └── qemu-rpi/
   │           ├── kernel-qemu-4.19.50-buster
   │           └── versatile-pb.dtb
-  ├── diagnostic/
-  │   ├── arbol
-  │   ├── arbol.cpp
-  │   └── solucion/
-  │
   └── tutorial/
         ├── practica_c_gdb
         ├── practica_bonus_asm
         └── practica_qemu 
-              ├── 2024-11-19-raspios-bookworm-armhf-lite.img
               ├── run-qemu.sh
               └── qemu-rpi/
                      ├── kernel-qemu-4.19.50-buster
                      └── versatile-pb.dtb
 ```
 
+A nivel de la demostración, nos vamos a enfocar en el directorio `demo`. 
+
+```
+emulators-debuggers-class/
+  ├── demo/
+     ├── pdb/
+     │   ├── pyfetch.py
+     │   └── pyfetch_2_0.py
+     └── qemu/
+         ├── run-qemu.sh
+         └── qemu-rpi/
+             ├── kernel-qemu-4.19.50-buster
+              └── versatile-pb.dtb
+```
+
+## Paso 3: Instalar la imagen de Raspberry Pi OS Lite
+
+Para poder emular el sistema operativo de Raspberry Pi, es necesario descargar la imagen del sistema. Esta puede obtenerse desde la página oficial de Raspberry Pi. La versión más reciente al momento de esta guía es: `2024-11-19-raspios-bookworm-armhf-lite.img`.
+Alternativamente, se puede descargar de manera manual en la pagina oficial dentro de directorio `demo/qemu` dentro del repositorio o mediante una terminal. 
+
+🔗 [Descargar desde la página oficial](https://www.raspberrypi.com/software/operating-systems/)
+
+🔗 Mediante una terminal 
+
+Se debe ingresar dentro del directorio demo/qemu
+```bash
+cd ~/emulators-debuggers-class/demo/qemu
+```
+
+Luego instalar y descomprimir la imagen (puede tardar un poco, dependiendo de la conexion de internet)
+```bash
+wget https://downloads.raspberrypi.org/raspios_armhf/images/raspios_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz
+xz -dk 2024-11-19-raspios-bookworm-armhf-lite.img.xz
+```
+
+## Paso 4: 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+---
 ## 4. Tutorial
 
 Este tutorial proporciona una guía detallada:
