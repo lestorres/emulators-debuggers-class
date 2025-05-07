@@ -72,7 +72,7 @@ Esta guía se centra en el uso de herramientas **open source** como emuladores y
 ### 1.1 QEMU
 
 <p align="center">
-  <img src="images_class/docker_1.png"  width="1000"/>
+  <img src="images/Qemu_logo.png"  width="500"/>
 </p>
 
 
@@ -85,7 +85,7 @@ QEMU (Quick Emulator) es un emulador y virtualizador de código abierto, versát
 Además, QEMU es compatible con **gdbserver** para depuración remota, lo que facilita el desarrollo y la depuración en entornos sin acceso inmediato a hardware físico. Además herramientas como **qemu-img** para crear y modificar imágenes de disco.
 
 <p align="center">
-  <img src="images_class/docker_1.png"  width="1000"/>
+  <img src="images/Qemu_support.png"  width="1000"/>
 </p>
 
 
@@ -106,7 +106,7 @@ Además, QEMU es compatible con **gdbserver** para depuración remota, lo que fa
 ### 2.1 GDB (GNU Debugger)
 
 <p align="center">
-  <img src="images_class/docker_1.png"  width="1000"/>
+  <img src="images/gdb_logo.png"  width="500"/>
 </p>
 
 
@@ -125,8 +125,9 @@ GDB es el depurador estándar para programas escritos en lenguajes como C, C++ ,
 ### 2.2 PDB (Python Debugger)
 
 <p align="center">
-  <img src="images_class/docker_1.png"  width="1000"/>
+  <img src="images/python_pdb_2.png"  width="300"/>
 </p>
+
 
 
 **PDB** es el depurador estándar incluido en Python, utilizado para diagnosticar y comprender el comportamiento de un programa durante su ejecución. Su funcionamiento se basa en una interfaz interactiva que permite examinar el estado interno del programa paso a paso [3].
@@ -238,7 +239,7 @@ Alternativamente, se puede descargar de manera manual en la pagina oficial dentr
 🔗 [Descargar desde la página oficial](https://www.raspberrypi.com/software/operating-systems/)
 
 <p align="center">
-  <img src="images_class/docker_1.png"  width="1000"/>
+  <img src="images/rasbian_lite_instalar.png"  width="800"/>
 </p>
 
 🔗 Mediante una terminal 
@@ -250,8 +251,8 @@ cd ~/emulators-debuggers-class/demo/qemu
 
 Luego instalar y descomprimir la imagen (puede tardar un poco, dependiendo de la conexion de internet)
 ```bash
-wget https://downloads.raspberrypi.org/raspios_armhf/images/raspios_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz
-xz -dk 2024-11-19-raspios-bookworm-armhf-lite.img.xz
+wget https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-11-19/2024-11-19-raspios-bookworm-arm64-lite.img.xz
+xz -dk 2024-11-19-raspios-bookworm-arm64-lite.img.xz
 ```
 
 ## Paso 4: 
