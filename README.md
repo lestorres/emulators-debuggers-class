@@ -378,9 +378,16 @@ Para empezar a editar un archivo desde la terminal:
 ```bash
 vi archivo.py
 ```
+Despliega en esta caso, el programa:
+<p align="center">
+  <img src="images/Qemu_logo.png"  width="500"/>
+</p>
 
+### Paso 6.2: Ejecutar el programa
 
-
+```bash
+python3 archivo.py
+```
 
 ---
 ## 4. Tutorial
