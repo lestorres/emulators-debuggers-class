@@ -380,7 +380,7 @@ vi archivo.py
 ```
 Despliega en esta caso, el programa:
 <p align="center">
-  <img src="images/Qemu_logo.png"  width="500"/>
+  <img src="images/vi_hola_py.png"  width="500"/>
 </p>
 
 ### Paso 6.2: Ejecutar el programa
