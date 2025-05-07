@@ -190,8 +190,8 @@ La siguiente tabla describe el hardware virtual que se emulará con QEMU para co
 | Componente          | Descripción del Componente Emulado                                                                                                    |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | 🧠 `-cpu arm1176`   | Procesador **ARM1176JZF-S**, el mismo que utiliza la Raspberry Pi modelo 1. Soporta ARMv6 con MMU (gestión de memoria) y FPU.         |
-| 💾 `-m 256`         | Memoria RAM de **256 MB**, suficiente para sistemas embebidos ligeros como Raspberry Pi OS Lite.                                      |
-| 📦 `-M versatilepb` | Placa base virtual **Versatile Platform Baseboard**, una plataforma de referencia ampliamente soportada por QEMU para entornos ARM.   |
+| 💾 `-m 256`         | Memoria RAM de **256 MB**                                     |
+| 📦 `-M versatilepb` | Placa base virtual **Versatile Platform Baseboard**  |
 | 📀 `-hda`           | Disco duro virtual que contiene la imagen del sistema operativo: **Raspberry Pi OS Lite basado en Debian 12 (Bookworm)**.             |
 | 🧬 `-dtb`           | **Device Tree Blob** que informa al sistema operativo de las características del hardware virtual (`versatile-pb.dtb`).               |
 | 🐧 `-kernel`        | Kernel Linux precompilado, ajustado para funcionar sobre la arquitectura y periféricos del sistema emulado (no usa el kernel de RPi). |
