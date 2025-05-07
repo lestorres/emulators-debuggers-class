@@ -392,19 +392,224 @@ python3 archivo.py
 ---
 ## 4. Tutorial
 
-Este tutorial proporciona una guía detallada:
+Este tutorial proporciona una guía paso a paso para emular un programa simple en un entorno embebido utilizando **QEMU + G++ + GDB**, ejecutando directamente en **modo shell root** sobre una imagen de **Raspberry Pi OS Lite basada en Debian 12 (Bookworm)**, sin pasar por `systemd`.
 
-1. **Instalar herramientas necesarias**:
-   - Instalar QEMU, GDB y otros programas necesarios en tu sistema operativo.
-   
-2. **Configurar un entorno de emulación**:
-   - Preparar tu entorno para emular sistemas embebidos (ej. ARM, RISC-V).
+> 🎯 **Objetivo final**: Ejecutar un entorno shell funcional en QEMU y poder compilar/programar con herramientas embebidas.
 
-3. **Compilar y ejecutar un programa en el emulador**:
-   - Desde la creación del código fuente hasta la ejecución en QEMU.
-   
-4. **Configurar y usar GDB para depuración remota**:
-   - Conectar GDB a QEMU y realizar depuración paso a paso.
+---
+
+### ✅ Prerrequisitos
+
+Asegúrate de contar con lo siguiente:
+
+- Ubuntu Linux 20.04 o superior
+- Herramientas necesarias instaladas (se detallan a continuación)
+- Imagen `.img` de Raspberry Pi OS Lite  
+  `2024-11-19-raspios-bookworm-armhf-lite.img`
+- Kernel compatible para QEMU `kernel-qemu-4.19.50-buster` (ya incluido)
+- Árbol de dispositivos `.dtb` compatible `versatile-pb.dtb` (ya incluido)
+
+> 📝 **Nota importante**: Para el documento a entregar, **toma una captura de pantalla** al finalizar cada paso y colócala en el documento de plantilla adjunto.
+
+---
+
+### 🔧 Paso 1: Instalar herramientas necesarias
+
+Desde una terminal, ejecuta los siguientes comandos:
+
+```bash
+sudo apt update
+sudo apt install qemu-system-arm qemu-efi
+sudo apt install g++ gdb
+```
+
+### Paso 2: Clonar el Repositorio `emulators-debuggers-class`.
+El repositorio completo contiene la siguiente estructura: 
+```
+emulators-debuggers-class/
+  ├── diagnostic/
+  │   ├── arbol
+  │   ├── arbol.cpp
+  │   └── solucion/
+  ├── images/
+  ├── demo/
+  │   ├── pdb/
+  │   │   ├── pyfetch.py
+  │   │   └── pyfetch_2_0.py
+  │   └── qemu/
+  │       ├── run-qemu.sh
+  │       └── qemu-rpi/
+  │           ├── kernel-qemu-4.19.50-buster
+  │           └── versatile-pb.dtb
+  └── tutorial/
+        ├── practica_c_gdb
+        ├── practica_bonus_asm
+        ├── plantilla_tutorial
+        └── practica_qemu 
+              ├── run-qemu.sh
+              └── qemu-rpi/
+                     ├── kernel-qemu-4.19.50-buster
+                     └── versatile-pb.dtb
+```
+
+A nivel de la demostración, nos vamos a enfocar en el directorio `tutorial`. 
+
+```
+emulators-debuggers-class/
+  ├── tutorial/
+        ├── practica_c_gdb
+        ├── plantilla_tutorial
+        ├── practica_bonus_asm
+        └── practica_qemu 
+              ├── run-qemu.sh
+              └── qemu-rpi/
+                     ├── kernel-qemu-4.19.50-buster
+                     └── versatile-pb.dtb
+```
+
+## Paso 3: Instalar la imagen de Raspberry Pi OS Lite
+
+Para poder emular el sistema operativo de Raspberry Pi, es necesario descargar la imagen del sistema. Esta puede obtenerse desde la página oficial de Raspberry Pi. La versión más reciente al momento de esta guía es: `2024-11-19-raspios-bookworm-armhf-lite.img`.
+Alternativamente, se puede descargar de manera manual en la pagina oficial de `Raspberry Pi` dentro del directorio `emulators-debuggers-class/demo/qemu` o mediante una terminal. 
+
+🔗 [Descargar desde la página oficial](https://www.raspberrypi.com/software/operating-systems/)
+
+<p align="center">
+  <img src="images/rasbian_lite_instalar.png"  width="800"/>
+</p>
+
+🔗 Mediante una terminal 
+
+Se debe ingresar dentro del directorio demo/qemu
+```bash
+cd ~/emulators-debuggers-class/demo/qemu
+```
+
+Luego instalar y descomprimir la imagen (puede tardar un poco, dependiendo de la conexion de internet)
+```bash
+wget https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-11-19/2024-11-19-raspios-bookworm-arm64-lite.img.xz
+xz -dk 2024-11-19-raspios-bookworm-arm64-lite.img.xz
+```
+
+## Paso 4: Verificar instalaciones antes de la emulación
+
+Para este punto dentro del directorio `emulators-debuggers-class/demo/qemu` debería contener:
+
+```plaintext
+total 2249372
+1729296 -rw-r--r-- 1 laptop laptop 8589934592  2024-11-19-raspios-bookworm-armhf-lite.img
+ 520068 -rw-r--r-- 1 laptop laptop  532543404  2024-11-19-raspios-bookworm-armhf-lite.img.xz
+      4 drwxr-xr-x 2 laptop laptop       4096  qemu-rpi
+      4 -rwxr-xr-x 1 laptop laptop        309  run-qemu.sh
+```
+
+Se puede verificar mediante este comando:
+
+```bash
+ls -ls ~/emulators-debuggers-class/demo/qemu
+```
+
+Otro aspecto **importante** que se debe ver es el contenido de `run-qemu.sh`, este contiene toda la configuración necesaria para emular el sistema Raspberry OS Lite con Qemu.
+
+Al hacer `cat` a `run-qemu.sh` dentro del directorio `~/emulators-debuggers-class/demo/qemu`
+
+```bash
+cat run-qemu.sh
+```
+se despliega su contenido por respuesta:
+
+```plaintext
+qemu-system-arm \
+  -kernel qemu-rpi/kernel-qemu-4.19.50-buster \
+  -cpu arm1176 \
+  -m 256 \
+  -M versatilepb \
+  -dtb qemu-rpi/versatile-pb.dtb \
+  -no-reboot \
+  -serial stdio \
+  -append "root=/dev/sda2 rootfstype=ext4 rw console=ttyAMA0 init=/bin/sh"  \
+  -hda 2024-11-19-raspios-bookworm-armhf-lite.img
+```
+Estos parámetros tienen un significado que configuran al dispositivo a emular.
+
+| Parámetro        | Descripción                                                                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `-kernel`        | Kernel Linux compilado para QEMU y compatible con Raspberry Pi.                                                                                        |
+| `-cpu arm1176`   | Emula la CPU ARMv6 usada en las primeras Raspberry Pi.                                                                                                 |
+| `-m 256`         | Asigna 256 MB de memoria RAM al sistema emulado.                                                                                                       |
+| `-M versatilepb` | Emula la placa base VersatilePB, compatible con el kernel proporcionado.                                                                               |
+| `-dtb`           | Archivo Device Tree (`.dtb`) necesario para describir el hardware virtualizado.                                                                        |
+| `-no-reboot`     | Impide que QEMU reinicie automáticamente tras un apagado.                                                                                              |
+| `-serial stdio`  | Redirige la consola serial al terminal para poder interactuar con el sistema.                                                                          |
+| `-append`        | Parámetros pasados al kernel: define la raíz del sistema, el tipo de sistema de archivos, la consola, y arranca directamente en una shell (`/bin/sh`). |
+| `-hda`           | Imagen del sistema Raspberry Pi OS Lite que se monta como disco principal.                                                                             |
+
+
+**Nota**: La imagen utilizada (2024-11-19-raspios-bookworm-armhf-lite.img) en este entorno inicia en modo shell (init=/bin/sh), útil para debugging o configuraciones avanzadas. Para arrancar el sistema completo, puedes cambiar esa línea por:
+
+```plaintext
+-append "root=/dev/sda2 rootfstype=ext4 rw console=ttyAMA0"
+```
+
+## Paso 5: A emular
+
+Primero se le deben dar permisos al ejecutable `run-qemu.sh`.
+
+```bash
+chmod +x run-qemu.sh
+```
+A emular:
+
+```bash
+./run-qemu.sh
+```
+Se debería desplegar una ventana como esta,
+
+<p align="center">
+  <img src="images/emular_rasp.png"  width="800"/>
+</p>
+
+Pero lo importante está en la terminal, esta versión de Raspberry OS no cuenta con interfaz gráfica, pero si con Python, G++ y GDB integrados. 
+
+
+## Paso 6: Programar dentro de la Emulación
+
+### Paso 6.1: Uso de `vi` como editor de texto
+
+Al no tener interfaz gráfica, se trabaja con editores en terminal. Uno de los más comunes es `vi`, un editor poderoso y presente por defecto en la mayoría de sistemas UNIX/Linux.
+
+#### Modo de uso
+
+`vi` trabaja con **dos modos** principales:
+- **Normal**: para comandos (volver con `ESC`)
+- **Inserción**: para escribir texto (`i`, `a`, `o`, etc.)
+
+### 🧭 Comandos esenciales de `vi`
+
+| Categoría | Comando | Descripción |
+|----------|---------|-------------|
+| **Insertar** | `i` / `I` | Insertar antes / al inicio de línea |
+|              | `a` / `A` | Insertar después / al final de línea |
+|              | `o` / `O` | Nueva línea debajo / encima |
+|              | `ESC`     | Volver al modo normal |
+| **Guardar / Salir** | `:w` / `:q` | Guardar / salir |
+|                    | `:wq`       | Guardar y salir |
+|                    | `:q!`       | Salir sin guardar |
+|                    | `ZZ`        | Guardar y salir (modo normal) |
+| **Movimiento** | `h` `j` `k` `l` | Izquierda / abajo / arriba / derecha |
+|                | `0` / `^` / `$` | Inicio / 1er carácter / final de línea |
+|                | `gg` / `G` / `:n` | Inicio / fin / ir a línea `n` |
+| **Edición** | `x` / `dd` / `yy` | Borrar carácter / borrar línea / copiar línea |
+|             | `p` / `P`         | Pegar debajo / encima |
+|             | `u` / `Ctrl+r`    | Deshacer / rehacer |
+| **Buscar** | `/texto` / `?texto` | Buscar hacia abajo / arriba |
+|            | `n` / `N`         | Siguiente / anterior coincidencia |
+| **Otros** | `:set number` / `:set nonumber` | Mostrar / ocultar números de línea |
+|           | `:syntax on` / `:syntax off`   | Activar / desactivar resaltado |
+
+
+
+
 
 ---
 
