@@ -71,6 +71,11 @@ Esta guía se centra en el uso de herramientas **open source** como emuladores y
 
 ### 1.1 QEMU
 
+<p align="center">
+  <img src="images_class/docker_1.png"  width="1000"/>
+</p>
+
+
 QEMU (Quick Emulator) es un emulador y virtualizador de código abierto, versátil y modular, que soporta múltiples arquitecturas como ARM, x86, MIPS y RISC-V. Se utiliza principalmente de dos maneras:
 
 - **Emulación de Sistema**: QEMU emula una máquina completa, permitiendo ejecutar un sistema operativo invitado. En este modo, la CPU puede ser completamente emulada o usar un hipervisor como KVM (Kernel-based Virtual Machine) para ejecutar directamente sobre el CPU del host. Este modo es ideal para testing  ya que permite emular sistemas completos sin necesidad de hardware real [1].
@@ -78,6 +83,11 @@ QEMU (Quick Emulator) es un emulador y virtualizador de código abierto, versát
 - **Emulación en Modo Usuario**: QEMU permite ejecutar programas compilados para una arquitectura de CPU diferente en otra, emulando siempre la CPU.
 
 Además, QEMU es compatible con **gdbserver** para depuración remota, lo que facilita el desarrollo y la depuración en entornos sin acceso inmediato a hardware físico. Además herramientas como **qemu-img** para crear y modificar imágenes de disco.
+
+<p align="center">
+  <img src="images_class/docker_1.png"  width="1000"/>
+</p>
+
 
 🔗 [Documentación oficial de QEMU](https://www.qemu.org/docs/master/)  
 🔗 [Repositorio en GitLab](https://gitlab.com/qemu-project/qemu)
@@ -95,6 +105,11 @@ Además, QEMU es compatible con **gdbserver** para depuración remota, lo que fa
 
 ### 2.1 GDB (GNU Debugger)
 
+<p align="center">
+  <img src="images_class/docker_1.png"  width="1000"/>
+</p>
+
+
 GDB es el depurador estándar para programas escritos en lenguajes como C, C++ , Assembler y otros, especialmente en entornos embebidos. Se utiliza para identificar y corregir errores en el código, permitiendo a los desarrolladores analizar el comportamiento de sus programas en tiempo real [2]. Entre sus funciones permite:
 
 - **Depuración Remota**: GDB soporta depuración remota, lo que permite depurar aplicaciones en sistemas que no tienen acceso directo al entorno de desarrollo, como dispositivos embebidos o máquinas virtuales.
@@ -108,6 +123,11 @@ GDB es el depurador estándar para programas escritos en lenguajes como C, C++ ,
 
 
 ### 2.2 PDB (Python Debugger)
+
+<p align="center">
+  <img src="images_class/docker_1.png"  width="1000"/>
+</p>
+
 
 **PDB** es el depurador estándar incluido en Python, utilizado para diagnosticar y comprender el comportamiento de un programa durante su ejecución. Su funcionamiento se basa en una interfaz interactiva que permite examinar el estado interno del programa paso a paso [3].
 PDB resulta especialmente útil para depurar scripts que interactúan con hardware, dispositivos periféricos o procesos concurrentes. Dado que muchos entornos embebidos carecen de interfaces gráficas, PDB proporciona una herramienta efectiva directamente desde la terminal [4].
@@ -175,6 +195,7 @@ emulators-debuggers-class/
   │   ├── arbol
   │   ├── arbol.cpp
   │   └── solucion/
+  ├── images/
   ├── demo/
   │   ├── pdb/
   │   │   ├── pyfetch.py
@@ -215,6 +236,10 @@ Para poder emular el sistema operativo de Raspberry Pi, es necesario descargar l
 Alternativamente, se puede descargar de manera manual en la pagina oficial dentro de directorio `demo/qemu` dentro del repositorio o mediante una terminal. 
 
 🔗 [Descargar desde la página oficial](https://www.raspberrypi.com/software/operating-systems/)
+
+<p align="center">
+  <img src="images_class/docker_1.png"  width="1000"/>
+</p>
 
 🔗 Mediante una terminal 
 
