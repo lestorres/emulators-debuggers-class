@@ -359,8 +359,30 @@ Se debería desplegar una ventana como esta,
   <img src="images/emular_rasp.png"  width="800"/>
 </p>
 
-Pero lo importante está en la terminal, esta versión de Raspberry OS no cuenta con interfaz gráfica, pero si con Python, G++ y GDB integrados. 
+Pero lo importante está en la terminal, esta versión de Raspberry OS no cuenta con interfaz gráfica, pero si con Python, G++ y GDB integrados.
 
+### ✅ Paso 5.1: Interactuar con el sistema
+En este momento, al estar dentro del sistema `Raspberry` OS Lite se puede interactuar de manera básica con el sistema de la siguiente manera: 
+
+- Ver directorios de root.
+
+```bash
+ls /
+```
+- Ver información sobre la distribución de Linux utilizada:
+  
+```bash
+cat /etc/os-release
+```
+- Ver toda la información disponible del kernel del sistema.
+```bash
+uname -a
+```
+- Ver la versión de Python, G++ y GDB.
+
+```bash
+python3 --version; g++ --version; gdb --version
+```
 
 ## Paso 6: Programar dentro de la Emulación
 
@@ -607,6 +629,30 @@ Se debería desplegar una ventana como esta,
 
 Pero lo importante está en la terminal, esta versión de Raspberry OS no cuenta con interfaz gráfica, pero si con Python, G++ y GDB integrados. 
 
+### ✅ Paso 5.1: Interactuar con el sistema
+En este momento, al estar dentro del sistema `Raspberry OS Lite` se puede interactuar de manera básica con el sistema de la siguiente manera: 
+
+- Ver directorios de root.
+
+```bash
+ls /
+```
+- Ver información sobre la distribución de Linux utilizada:
+  
+```bash
+cat /etc/os-release
+```
+- Ver toda la información disponible del kernel del sistema.
+```bash
+uname -a
+```
+
+- Ver la versión de Python, G++ y GDB.
+```bash
+python3 --version; g++ --version; gdb --version
+```
+
+
 ## Paso 6: Programar dentro de la Emulación
 
 ### Paso 6.1: Uso de `vi` como editor de texto
@@ -641,6 +687,7 @@ Al no tener interfaz gráfica, se trabaja con editores en terminal. Uno de los m
 |            | `n` / `N`         | Siguiente / anterior coincidencia |
 | **Otros** | `:set number` / `:set nonumber` | Mostrar / ocultar números de línea |
 |           | `:syntax on` / `:syntax off`   | Activar / desactivar resaltado |
+
 
 
 
