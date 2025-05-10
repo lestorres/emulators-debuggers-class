@@ -378,10 +378,10 @@ cat /etc/os-release
 ```bash
 uname -a
 ```
-- Ver la versión de Python, G++ y GDB.
+- Ver la versión de Python, as (GNU Binutils for Raspbian) y GDB.
 
 ```bash
-python3 --version; g++ --version; gdb --version
+python3 --version; as --version; gdb --version
 ```
 ---
 
@@ -797,8 +797,6 @@ Para empezar a escribir o editar tu archivo fuente en ensamblador, puedes hacerl
 
 ```bash
 echo '.section .data\nmsg: .asciz "Hola, mundo!    "\n\n.section .text\n.global _start\n_start:\n    mov r0, #1\n    ldr r1, =msg\n    mov r2, #13\n    mov r7, #4\n    swi 0\n    mov r0, #0\n    mov r7, #1\n    swi 0' > /home/pi/hola.asm
-
-
 ```
 Para abrirlo con un editor como vi:
 
@@ -884,7 +882,7 @@ Finalmente, ejecuta el programa desde la termina.
 
 ### 📀 Paso 6.2: Código a Depurar 
 
-El siguiente script es una utilidad ligera escrita en C++ que muestra información básica del sistema al estilo de Neofetch, una herramienta popular en Linux para mostrar datos del sistema de forma visual y estética en la terminal.
+El siguiente script es una utilidad ligera escrita en Assembler que muestra información básica del sistema al estilo de Neofetch pero de manera textual, sin acceder dinamicamente a ñas fuentes.
  
 > **Nota:** **Neofetch** es una herramienta de línea de comandos escrita en **Bash** que muestra información del sistema de forma visual y personalizable.  
 >
@@ -905,36 +903,98 @@ El siguiente script es una utilidad ligera escrita en C++ que muestra informaci�
 
 En la terminal de  Qemu, se debe acceder al directorio `home/pi` de esta manera `cd home/pi`. Luego se debe ejecutar, lo siguiente (Este es el código a depurar).  
 ```bash
+echo '.section .data\ntitulo: .asciz "---------------------GENERAL INFORMATION------------------\n"\nso_info: .asciz "Sistema Operativo : Raspbian GNU/Linux 12 (bookworm)\n"\nkernel_info: .asciz "Versión del kernel: 4.19.50+\n"\narch_info: .asciz "Arquitectura      : armv6l\n"\n\n.section .text\n.global _start\n\n_start:\n\nprint_titulo:\n    mov r0, #1              // stdout\n    ldr r1, =titulo         // puntero al mensaje\n    mov r2, #60             // longitud\n    mov r7, #4              // syscall write\n    swi 0\n\nprint_so:\n    mov r0, #1\n    ldr r1, =so_info\n    mov r2, #54\n    mov r7, #4\n    swi 0\n\nprint_kernel:\n    mov r0, #1\n    ldr r1, =kernel_info\n    mov r2, #31\n    mov r7, #4\n    swi 0\n\nprint_arch:\n    mov r0, #1\n    ldr r1, =arch_info\n    mov r2, #28\n    mov r7, #4\n    swi 0\n\nexit_program:\n    mov r0, #0\n    mov r7, #1\n    swi 0' > /home/pi/info.asm
 
 ```
-> A este punto se debe haber creado el script llamado `c_fetch.cpp`, se puede verificar haciendo un  `ls` en la terminal.
-
-
+> A este punto se debe haber creado el script llamado `info.asm`, se puede verificar haciendo un  `ls` en la terminal.
 
 
 ### Paso 6.3: Depuración
-El script llamado `c_fetch.cpp`, presenta una serie de errores, que deben ser corregidos para desplegar la información del sistema de manera correcta, esto se realizará mediante el uso del depurador GDB integra de manera nativa en Python. El objetivo del script es desplegar lo siguiente: 
+El script llamado `info.asm`, presenta una serie de errores, que deben ser corregidos para desplegar la información del sistema de manera correcta, esto se realizará mediante el uso del depurador GDB integra de manera nativa en Python. El objetivo del script es desplegar lo siguiente: 
 
 <p align="center">
-  <img src="images/c_fetch.png"  width="800"/>
+  <img src="images/info_asm.png"  width="800"/>
 </p>
 
 ### 🛠 Comandos útiles dentro de gdb
 
+| Comando                           | Descripción                                                                                        |
+| --------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `gdb ./programa`                  | Inicia GDB con el programa especificado.                                                           |
+| `run` (o `r`)                     | Inicia la ejecución del programa.                                                                  |
+| `break <línea>` (o `b <línea>`)   | Coloca un punto de interrupción en una línea específica del código. Ejemplo: `b 10` para línea 10. |
+| `break <función>`                 | Coloca un punto de interrupción en una función específica.                                         |
+| `continue` (o `c`)                | Continúa la ejecución hasta el siguiente punto de interrupción.                                    |
+| `next` (o `n`)                    | Avanza al siguiente paso de código, pero sin entrar en las funciones.                              |
+| `step` (o `s`)                    | Avanza al siguiente paso de código, entrando en las funciones si las hay.                          |
+| `finish`                          | Completa la ejecución de la función actual y regresa al lugar donde fue llamada.                   |
+| `print <variable>`                | Muestra el valor de una variable. Ejemplo: `print x`.                                              |
+| `info locals`                     | Muestra las variables locales de la función actual.                                                |
+| `info args`                       | Muestra los argumentos de la función actual.                                                       |
+| `info break`                      | Muestra información sobre los puntos de interrupción actuales.                                     |
+| `delete <número>`                 | Elimina el punto de interrupción con el número especificado.                                       |
+| `list`                            | Muestra las líneas de código fuente cercanas al punto donde está el programa.                      |
+| `backtrace` (o `bt`)              | Muestra la pila de llamadas (stack trace).                                                         |
+| `quit` (o `q`)                    | Sale de GDB.                                                                                       |
+| `watch <variable>`                | Coloca un "watchpoint" para que GDB detenga la ejecución cuando el valor de una variable cambie.   |
+| `info registers`                  | Muestra el contenido de todos los registros del procesador.                                        |
+| `disassemble`                     | Muestra el código ensamblador de la función actual o de la región de memoria especificada.         |
+| `set variable <variable>=<valor>` | Cambia el valor de una variable en tiempo de ejecución.                                            |
+| `list <función>`                  | Muestra el código fuente de una función específica.                                                |
+| `x/<n> <dirección>`               | Muestra el contenido de memoria en formato hexadecimal o ASCII. Ejemplo: `x/10x $esp`.             |
+| `start`                           | Inicia la ejecución del programa y se detiene en la primera línea de la función `main`.            |
 
 
 ---
-Para depurar se deben aplicar las siguientes banderas:
+Para ensamblar el codigo con las bandera de depuración, se deben aplicar las siguientes banderas:
+
 ```bash
+as -g -o info.o /home/pi/info.asm
 ```
 
-- Reto a: ERROR 1 
+```bash
+ld -g -o info info.o
+```
+
+```bash
+gdb ./info
+```
+
+Una vez dentro de GDB, lo primero siempre es definir los breakpoints dados por las etiquetas de la siguiente manera:
+
+```bash
+(gdb) break _start
+```
+```bash
+(gdb) break print_titulo
+```
+```bash
+(gdb) break print_os
+```
+```bash
+(gdb) break print_kernel
+```
+```bash
+(gdb) break print_arch
+```
+
+5. Depuración interactiva
+Puedes ir revisando los registros y la memoria, o incluso ir paso por paso, con comandos como:
+
+.- info registers: Ver los valores actuales de los registros.
+
+- x/10xw $sp: Ver el contenido de la pila.
+
+- step o next para avanzar entre las instrucciones.
+
+
+- Reto a: ERROR 1 (¿El salto de linea es así?)
  
-- Reto b: ERROR 2 
+- Reto b: ERROR 2 (¿El salto de linea es así?)
 
-- Reto c: ERROR 3 
+- Reto c: ERROR 3 (¿El salto de linea es así?)
 
-- Reto d: ERROR 4 
+- Reto d: ERROR 4 (¿El salto de linea es así?)
 
 
 
