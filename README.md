@@ -178,7 +178,7 @@ Esta demostración busca guiar a través de un ejemplo práctico utilizando **QE
 
 - Ubuntu Linux (20.04 o superior)
 - Git
-- QEMU y Python3 instalado (Se instalan en esta guía y en el tutorial)
+- QEMU instalado (Se instalan en esta guía y en el tutorial)
 - Imagen `.img` de Raspberry Pi OS Lite ( `2024-11-19-raspios-bookworm-armhf-lite.img`, se instala en esta guía)
 - Kernel compatible para QEMU ( `kernel-qemu-4.19.50-buster`, ya includo en el repositorio)
 - Archivo `.dtb` compatible (`versatile-pb.dtb`, ya includo en el repositorio)
@@ -205,8 +205,9 @@ La siguiente tabla describe el hardware virtual que se emulará con QEMU para co
 ### Paso 1: Desde una terminal se deben instalar los siguientes paquetes:
 ```bash
 sudo apt update
-sudo apt install qemu-system-arm qemu-efi
-sudo apt install python3
+sudo apt install qemu-system-arm
+sudo apt install qemu-utils
+sudo apt install qemu-efi
 ```
 ### Paso 2: Clonar el Repositorio `emulators-debuggers-class`.
 El repositorio completo contiene la siguiente estructura: 
@@ -227,9 +228,8 @@ emulators-debuggers-class/
   │           ├── kernel-qemu-4.19.50-buster
   │           └── versatile-pb.dtb
   └── tutorial/
-        ├── practica_c_gdb
         ├── practica_bonus_asm
-        └── practica_qemu 
+        └── qemu 
               ├── run-qemu.sh
               └── qemu-rpi/
                      ├── kernel-qemu-4.19.50-buster
