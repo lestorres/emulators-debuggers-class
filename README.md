@@ -735,14 +735,14 @@ dmesg
 ```
 
 
-# 🔧 Parte II: Programar y Depurar dentro de la Emulación con G++ Y GDB
+# 🔧 Parte II: Programar y Depurar en Ensamblador con `as` y GDB
 
 ### Paso 6: Familiarizarse con las herramientas de depuración
 Para esta sección, requerimos de 4 herramientas:
-- Un editor de texto, en este caso se utilizará `vi` (Ya incluído en la imagen).
-- El código a depurar. (Se incluye más adelante)
-- El compilador para C++, G++ en esta caso  (Ya incluído en la imagen)
-- El depurador GDB (Ya incluído en la imagen).
+- Un editor de texto, en este caso se utilizará `vi` (Ya incluido en la imagen).
+- El código a depurar (se incluye más adelante).
+- El ensamblador `as` (Ya incluido en la imagen).
+- El depurador GDB (Ya incluido en la imagen).
 
 
 ### 🧭 Paso 6.1: Uso de `vi` como editor de texto
@@ -796,7 +796,9 @@ hola  →  Ejecutable
 Para empezar a escribir o editar tu archivo fuente en ensamblador, puedes hacerlo con un editor de texto como `vi` o cualquier otro editor disponible:
 
 ```bash
-echo -e '.section .data\nmsg: .asciz "Hola, mundo!"\n\n.section .text\n.global _start\n_start:\n    mov r0, #1\n    ldr r1, =msg\n    mov r2, #13\n    mov r7, #4\n    swi 0\n    mov r0, #0\n    mov r7, #1\n    swi 0' > /home/pi/hola.asm
+echo '.section .data\nmsg: .asciz "Hola, mundo!    "\n\n.section .text\n.global _start\n_start:\n    mov r0, #1\n    ldr r1, =msg\n    mov r2, #13\n    mov r7, #4\n    swi 0\n    mov r0, #0\n    mov r7, #1\n    swi 0' > /home/pi/hola.asm
+
+
 ```
 Para abrirlo con un editor como vi:
 
@@ -804,23 +806,58 @@ Para abrirlo con un editor como vi:
 vi hola.asm
 ```
 
+Debe desplegar esto:
+
+```paintext
+.section .data
+    msg: .asciz "Hola, mundo!  " // Mensaje 
+
+.section .text
+    .global _start
+
+_start:
+    mov r0, #1            // Establece el descriptor de archivo para stdout
+    ldr r1, =msg          // Carga la dirección del mensaje en r1
+    mov r2, #13           // Longitud del mensaje
+    mov r7, #4            // Número de llamada al sistema para escribir
+    swi 0                 // Llamada al sistema para escribir el mensaje
+
+    mov r0, #0            // Código de salida
+    mov r7, #1            // Número de llamada al sistema para salir
+    swi 0                 // Llamada al sistema para salir del programa
+```
+
+#### Tabla de registros registros utilizados en **ARM32**
+
+| Registro   | Nombre (32 bits) | Descripción                                                                                                                           |
+| ---------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **R0-R3**  | **r0 - r3**      | Registros de propósito general, usados para pasar parámetros y devolver valores en las funciones.                                     |
+| **R4-R7**  | **r4 - r7**      | Registros de propósito general. Usados como registros temporales en la mayoría de las instrucciones.                                  |
+| **R8-R12** | **r8 - r12**     | Registros de propósito general. Pueden ser utilizados por el compilador para almacenar valores temporales.                            |
+| **R13**    | **SP**           | **Stack Pointer**. Apunta al tope de la pila en el sistema.                                                                           |
+| **R14**    | **LR**           | **Link Register**. Guarda la dirección de retorno cuando se hace una llamada a función (return address).                              |
+| **R15**    | **PC**           | **Program Counter**. Contiene la dirección de la siguiente instrucción a ejecutar.                                                    |
+| **CPSR**   | **CPSR**         | **Current Program Status Register**. Contiene el estado actual de los flags de la CPU (estado de las interrupciones, el modo, etc.).  |
+| **SPSR**   | **SPSR**         | **Saved Program Status Register**. Almacena el estado del CPSR cuando se cambia de modo (por ejemplo, al entrar en una interrupción). |
+
+
+
 #### 🏗 Paso 2: Ensamblado (Traducción a Código Máquina)
 El paso de ensamblado convierte el código fuente en ensamblador a código máquina. Usamos el ensamblador as para generar el archivo objeto:
 
 ```bash
 as -o hola.o hola.asm
-
 ```
 
-#### 🔍 Paso 3: Inspeccionar el Ensamblador desde el Objeto (Opcional)
-Una vez generado el archivo objeto, puedes inspeccionarlo con objdump para ver cómo el código ensamblador fue traducido a instrucciones de máquina:
+#### 🔍 Paso 3: Inspeccionar el Ensamblador desde el Objeto
+Una vez generado el archivo objeto, se puedes inspeccionar con objdump para ver cómo el código ensamblador de manera comparativa con el códidp realizado:
 
 ```bash
 objdump -d /home/pi/hola.o
 ```
 
-#### 🔗 Paso 4: Enlazado (Linking)
-El enlazado (linking) es el proceso donde el archivo objeto se convierte en un ejecutable final. Usamos el enlazador ld para combinar el archivo objeto y generar el ejecutable:
+#### 🔗 Paso 4: Enlace (Linking)
+El enlazado (linking) es el proceso donde el archivo objeto se convierte en un ejecutable final. Usamos el enlazador ld para combinar el archivo objeto con las bibliotecas y generar el ejecutable:
 
 ```bash
 ld -o hola hola.o
@@ -830,7 +867,7 @@ ld -o hola hola.o
 Una vez que tienes el ejecutable, asegúrate de otorgar permisos de ejecución al archivo:
 
 ```bash
-chmod +x /home/pi/hola
+chmod +x hola
 ```
 
 #### 🚀 Paso 6: Ejecución
@@ -839,6 +876,11 @@ Finalmente, ejecuta el programa desde la termina.
 ```bash
 ./hola
 ```
+
+<p align="center">
+  <img src="images/hola_asm.png"  width="800"/>
+</p>
+
 
 ### 📀 Paso 6.2: Código a Depurar 
 
