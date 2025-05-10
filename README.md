@@ -532,6 +532,7 @@ Asegúrate de contar con lo siguiente:
 - Árbol de dispositivos `.dtb` compatible `versatile-pb.dtb` (ya incluido)
 
 > 📝 **Nota importante**: Para el documento a entregar, **toma una captura de pantalla** al finalizar cada paso y colócala en el documento de plantilla adjunto.
+> Recomendación: Revisar la plantilla para conocer que pasos requieren de captura de pantalla.
 
 ---
 
@@ -728,10 +729,23 @@ uname -a
 python3 --version; g++ --version; gdb --version
 ```
 
+- **NUEVO:** Ver el registro de arranque del sistema.
+```bash
+dmesg
+```
 
-## Paso 6: Programar dentro de la Emulación
 
-### Paso 6.1: Uso de `vi` como editor de texto
+# 🔧 Parte II: Programar y Depurar dentro de la Emulación con G++ Y GDB
+
+### Paso 6: Familiarizarse con las herramientas de depuración
+Para esta sección, requerimos de 4 herramientas:
+- Un editor de texto, en este caso se utilizará `vi` (Ya incluído en la imagen).
+- El código a depurar. (Se incluye más adelante)
+- El compilador para C++, G++ en esta caso  (Ya incluído en la imagen)
+- El depurador GDB (Ya incluído en la imagen).
+
+
+### 🧭 Paso 6.1: Uso de `vi` como editor de texto
 
 Al no tener interfaz gráfica, se trabaja con editores en terminal. Uno de los más comunes es `vi`, un editor poderoso y presente por defecto en la mayoría de sistemas UNIX/Linux.
 
@@ -741,7 +755,7 @@ Al no tener interfaz gráfica, se trabaja con editores en terminal. Uno de los m
 - **Normal**: para comandos (volver con `ESC`)
 - **Inserción**: para escribir texto (`i`, `a`, `o`, etc.)
 
-### 🧭 Comandos esenciales de `vi`
+###  Comandos esenciales de `vi`
 
 | Categoría | Comando | Descripción |
 |----------|---------|-------------|
@@ -763,6 +777,122 @@ Al no tener interfaz gráfica, se trabaja con editores en terminal. Uno de los m
 |            | `n` / `N`         | Siguiente / anterior coincidencia |
 | **Otros** | `:set number` / `:set nonumber` | Mostrar / ocultar números de línea |
 |           | `:syntax on` / `:syntax off`   | Activar / desactivar resaltado |
+
+
+### Flujo de Trabajo para Crear un Programa en Ensamblador ARM
+
+Es importante recordar el flujo del ensamblador
+
+```bash
+hola.asm 
+   ↓ (Ensamblador: as)
+hola.o
+   ↓ (Linker: ld)
+hola  →  Ejecutable
+```
+
+#### 🧾 Paso 1: Crear o Editar el archivo fuente (Ensamblador)
+
+Para empezar a escribir o editar tu archivo fuente en ensamblador, puedes hacerlo con un editor de texto como `vi` o cualquier otro editor disponible:
+
+```bash
+echo -e '.section .data\nmsg: .asciz "Hola, mundo!"\n\n.section .text\n.global _start\n_start:\n    mov r0, #1\n    ldr r1, =msg\n    mov r2, #13\n    mov r7, #4\n    swi 0\n    mov r0, #0\n    mov r7, #1\n    swi 0' > /home/pi/hola.asm
+```
+Para abrirlo con un editor como vi:
+
+```bash
+vi hola.asm
+```
+
+#### 🏗 Paso 2: Ensamblado (Traducción a Código Máquina)
+El paso de ensamblado convierte el código fuente en ensamblador a código máquina. Usamos el ensamblador as para generar el archivo objeto:
+
+```bash
+as -o hola.o hola.asm
+
+```
+
+#### 🔍 Paso 3: Inspeccionar el Ensamblador desde el Objeto (Opcional)
+Una vez generado el archivo objeto, puedes inspeccionarlo con objdump para ver cómo el código ensamblador fue traducido a instrucciones de máquina:
+
+```bash
+objdump -d /home/pi/hola.o
+```
+
+#### 🔗 Paso 4: Enlazado (Linking)
+El enlazado (linking) es el proceso donde el archivo objeto se convierte en un ejecutable final. Usamos el enlazador ld para combinar el archivo objeto y generar el ejecutable:
+
+```bash
+ld -o hola hola.o
+```
+
+#### 🔒 Paso 5: Otorgar permisos de ejecución
+Una vez que tienes el ejecutable, asegúrate de otorgar permisos de ejecución al archivo:
+
+```bash
+chmod +x /home/pi/hola
+```
+
+#### 🚀 Paso 6: Ejecución
+Finalmente, ejecuta el programa desde la termina.
+
+```bash
+./hola
+```
+
+### 📀 Paso 6.2: Código a Depurar 
+
+El siguiente script es una utilidad ligera escrita en C++ que muestra información básica del sistema al estilo de Neofetch, una herramienta popular en Linux para mostrar datos del sistema de forma visual y estética en la terminal.
+ 
+> **Nota:** **Neofetch** es una herramienta de línea de comandos escrita en **Bash** que muestra información del sistema de forma visual y personalizable.  
+>
+> Se puede instalar con:
+>
+> ```bash
+> sudo apt install neofetch
+> ```
+> 
+> Se puede ejecutar:
+>
+> ```bash
+> neofetch
+> ```
+
+
+**El codigo por depurar es el siguente**:
+
+En la terminal de  Qemu, se debe acceder al directorio `home/pi` de esta manera `cd home/pi`. Luego se debe ejecutar, lo siguiente (Este es el código a depurar).  
+```bash
+
+```
+> A este punto se debe haber creado el script llamado `c_fetch.cpp`, se puede verificar haciendo un  `ls` en la terminal.
+
+
+
+
+### Paso 6.3: Depuración
+El script llamado `c_fetch.cpp`, presenta una serie de errores, que deben ser corregidos para desplegar la información del sistema de manera correcta, esto se realizará mediante el uso del depurador GDB integra de manera nativa en Python. El objetivo del script es desplegar lo siguiente: 
+
+<p align="center">
+  <img src="images/c_fetch.png"  width="800"/>
+</p>
+
+### 🛠 Comandos útiles dentro de gdb
+
+
+
+---
+Para depurar se deben aplicar las siguientes banderas:
+```bash
+```
+
+- Reto a: ERROR 1 
+ 
+- Reto b: ERROR 2 
+
+- Reto c: ERROR 3 
+
+- Reto d: ERROR 4 
 
 
 
