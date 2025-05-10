@@ -514,7 +514,7 @@ python3 -m pdb pyfetch.py
 ---
 ## 4. Tutorial
 
-Este tutorial proporciona una guía paso a paso para emular un programa simple en un entorno embebido utilizando **QEMU + G++ + GDB**, ejecutando directamente en **modo shell root** sobre una imagen de **Raspberry Pi OS Lite basada en Debian 12 (Bookworm)**, sin pasar por `systemd`.
+Este tutorial proporciona una guía paso a paso para emular un programa simple en un entorno embebido utilizando **QEMU + AS + GDB**, ejecutando directamente en **modo shell root** sobre una imagen de **Raspberry Pi OS Lite basada en Debian 12 (Bookworm)**, sin pasar por `systemd`.
 
 > 🎯 **Objetivo final**: Ejecutar un entorno shell funcional en QEMU y poder compilar/programar con herramientas embebidas.
 
@@ -562,7 +562,6 @@ Desde una terminal, ejecuta los siguientes comandos:
 ```bash
 sudo apt update
 sudo apt install qemu-system-arm qemu-efi
-sudo apt install g++ gdb
 ```
 
 ### Paso 2: Clonar el Repositorio `emulators-debuggers-class`.
@@ -724,9 +723,9 @@ cat /etc/os-release
 uname -a
 ```
 
-- Ver la versión de Python, G++ y GDB.
+- Ver la versión de Python, as y GDB.
 ```bash
-python3 --version; g++ --version; gdb --version
+python3 --version; as --version; gdb --version
 ```
 
 - **NUEVO:** Ver el registro de arranque del sistema.
@@ -882,7 +881,7 @@ Finalmente, ejecuta el programa desde la termina.
 
 ### 📀 Paso 6.2: Código a Depurar 
 
-El siguiente script es una utilidad ligera escrita en Assembler que muestra información básica del sistema al estilo de Neofetch pero de manera textual, sin acceder dinamicamente a ñas fuentes.
+El siguiente script es una utilidad ligera escrita en Assembler que muestra información básica del sistema al estilo de Neofetch pero de manera textual, sin acceder dinamicamente a las fuentes.
  
 > **Nota:** **Neofetch** es una herramienta de línea de comandos escrita en **Bash** que muestra información del sistema de forma visual y personalizable.  
 >
@@ -981,13 +980,20 @@ Una vez dentro de GDB, lo primero siempre es definir los breakpoints dados por l
 5. Depuración interactiva
 Puedes ir revisando los registros y la memoria, o incluso ir paso por paso, con comandos como:
 
-.- info registers: Ver los valores actuales de los registros.
+- info registers: Ver los valores actuales de los registros.
+```bash
+ info registers
+```
 
-- x/10xw $sp: Ver el contenido de la pila.
-
+- x/10xw $sp: Ver el contenido de un registro en hexadecimal.
+```bash
+x/c 0x<reg>
+```
 - step o next para avanzar entre las instrucciones.
-
-
+```bash
+step
+```
+---
 - Reto a: ERROR 1 (¿El salto de linea es así?)
  
 - Reto b: ERROR 2 (¿El salto de linea es así?)
@@ -995,10 +1001,6 @@ Puedes ir revisando los registros y la memoria, o incluso ir paso por paso, con 
 - Reto c: ERROR 3 (¿El salto de linea es así?)
 
 - Reto d: ERROR 4 (¿El salto de linea es así?)
-
-
-
-
 
 
 ---
