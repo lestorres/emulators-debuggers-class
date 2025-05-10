@@ -383,10 +383,19 @@ uname -a
 ```bash
 python3 --version; g++ --version; gdb --version
 ```
+---
 
-## Paso 6: Programar dentro de la Emulación
+# 🔧 Parte II: Programar y Depurar dentro de la Emulación con Python y PDB
 
-### Paso 6.1: Uso de `vi` como editor de texto
+### Paso 6: Familiarizarse con las herramientas de depuración
+Para esta sección, requerimos de 4 herramientas:
+- Un editor de texto, en este caso se utilizará `vi` (Ya incluído en la imagen).
+- El código a depurar. (Se incluye más adelante)
+- El intérprete de Python (Ya incluído en la imagen)
+- El depurador PDB (Ya incluído en la imagen).
+
+
+### 🧭 Paso 6.1: Uso de `vi` como editor de texto
 
 Al no tener interfaz gráfica, se trabaja con editores en terminal. Uno de los más comunes es `vi`, un editor poderoso y presente por defecto en la mayoría de sistemas UNIX/Linux.
 
@@ -396,7 +405,7 @@ Al no tener interfaz gráfica, se trabaja con editores en terminal. Uno de los m
 - **Normal**: para comandos (volver con `ESC`)
 - **Inserción**: para escribir texto (`i`, `a`, `o`, etc.)
 
-### 🧭 Comandos esenciales de `vi`
+###  Comandos esenciales de `vi`
 
 | Categoría | Comando | Descripción |
 |----------|---------|-------------|
@@ -420,20 +429,63 @@ Al no tener interfaz gráfica, se trabaja con editores en terminal. Uno de los m
 |           | `:syntax on` / `:syntax off`   | Activar / desactivar resaltado |
 
 Para empezar a editar un archivo desde la terminal:
-
 ```bash
 vi archivo.py
 ```
-Despliega en esta caso, el programa:
+Despliega en esta caso, el programa (En este caso se creo un "Hola mundo") :
+
 <p align="center">
   <img src="images/vi_hola_py.png"  width="500"/>
 </p>
 
-### Paso 6.2: Ejecutar el programa
 
+### 📀 Paso 6.2: Código a Depurar 
+
+El siguiente script es una utilidad ligera escrita en Python que muestra información básica del sistema al estilo de Neofetch, una herramienta popular en Linux para mostrar datos del sistema de forma visual y estética en la terminal.
+ 
+> **Nota:** **Neofetch** es una herramienta de línea de comandos escrita en **Bash** que muestra información del sistema de forma visual y personalizable.  
+>
+> Se puede instalar con:
+>
+> ```bash
+> sudo apt install neofetch
+> ```
+> 
+> Se puede ejecutar:
+>
+> ```bash
+> neofetch
+> ```
+
+
+
+**El codigo por depurar es el siguente**:
+
+En la terminal de  Qemu, se debe acceder al directorio `home/pi` de esta manera `cd home/pi`. Luego se debe ejecutar, lo siguiente (Este es el código a depurar).  
 ```bash
-python3 archivo.py
+echo "#!/usr/bin/env python3\nimport platform\nimport os\nimport time\n\n# Obtener información del sistema\n\ndef system_info():\n    # Intentar obtener el tiempo de actividad\n    try:\n        with open('/proc/uptime', 'r') as f:\n            uptime_seconds = float(f.readline().split()[0])\n    except FileNotFoundError:\n        uptime_seconds = 0\n    uptime_hours = int(uptime_seconds / 3600)\n    uptime_minutes = int((uptime_seconds % 3600) / 60)\n    uptime_seconds_final = int(uptime_seconds % 60)\n\n    # Intentar obtener la memoria total\n    try:\n        with open('/proc/meminfo', 'r') as f:\n            lines = f.readlines()\n        mem_total = int(lines[0].split()[1]) // 1024  # Convertir de KB a MB\n        mem_total_gb = round(mem_total / 1024, 2)  # Convertir de MB a GB\n    except FileNotFoundError:\n        mem_total = 'Desconocido'\n        mem_total_gb = 'Desconocido'\n    except Exception as e:\n        mem_total = 'Error: ' + str(e)\n        mem_total_gb = 'Error'\n\n    # Intentar obtener el nombre del host\n    host_name = platform.node() or 'Desconocido'\n\n    # Intentar obtener el sistema operativo y su versión\n    try:\n        with open('/etc/os-release', 'r') as f:\n            os_info = f.read().splitlines()\n        os_name = [line for line in os_info if 'PRETTY_NAME' in line][0].split('=')[1].strip('\"')\n    except FileNotFoundError:\n        os_name = 'Desconocido'\n\n    # Intentar obtener la shell usada\n    try:\n        shell = os.environ.get('SHELL', 'Desconocido')\n    except Exception:\n        shell = 'Desconocido'\n\n    # Intentar obtener paquetes instalados\n    try:\n        with open('/var/lib/dpkg/status', 'r') as f:\n            package_count = sum(1 for line in f if line.startswith('Package:'))\n    except FileNotFoundError:\n        package_count = 'Desconocido'\n\n    # Obtener la versión del kernel\n    kernel_version = os.popen('uname -r').read().strip()\n\n    # Obtener información de la CPU\n    try:\n        cpu_info = os.popen('dmesg | grep -i \"cpu\"').read()\n    except Exception:\n        cpu_info = 'Error al obtener información de la CPU'\n\n    # Obtener detalles de RAM desde dmesg\n    try:\n        ram_info = os.popen('dmesg | grep -i \"memory\"').read()\n    except Exception:\n        ram_info = 'Error al obtener información de RAM'\n\n    # Imprimir la información del sistema\n    print('\\033[93m---------------------GENERAL INFORMATION---------------------\\033[0m')\n    print(f'Sistema Operativo : {os_name}')\n    print(f'Versión del kernel: {kernel_version}')\n    print(f'Arquitectura      : {platform.machine()}')\n    print(f'Tiempo encendido  : {uptime_hours} horas, {uptime_minutes} minutos, {uptime_seconds_final} segundos')\n    print(f'RAM Total         : {mem_total_gb} GB' if mem_total != 'Desconocido' else 'RAM Total: Desconocido')\n    print(f'Nombre del host   : {host_name}')\n    print(f'Shell             : {shell}')\n    print(f'Paquetes instalados: {package_count}')\n\n    # Imprimir información separada sobre la CPU\n    print('\\033[93m' + '-' * 20 + ' CPU INFORMATION ' + '-' * 20 + '\\033[0m')\n    print(cpu_info)\n\n    # Imprimir información separada sobre la RAM\n    print('\\033[93m' + '-' * 20 + ' MEMORY INFORMATION ' + '-' * 20 + '\\033[0m')\n    print(ram_info)\n\nif __name__ == '__main__':\n    os.system('clear')  # En Windows sería 'cls'\n    system_info()" > /home/pi/pyfetch.py
 ```
+> A este punto se debe haber creado el script llamado `pyfetch.py`, se puede verificar haciendo un  `ls` en la terminal.
+
+### Paso 6.3: Depuración
+El script llamado `pyfetch.py`, presenta una serie de errores, que deben ser corregidos para desplegar la información del sistema de manera correcta, esto se realizará mediante el uso del depurador PDB integra de manera nativa en Python. El objetivo del script es desplegar lo siguiente: 
+
+<p align="center">
+  <img src="images/vi_hola_py.png"  width="500"/>
+</p>
+
+Reto a:
+
+Reto b:
+
+Reto c:
+
+Reto d:
+
+
+
+
+
 
 ---
 ## 4. Tutorial
