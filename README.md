@@ -256,7 +256,7 @@ emulators-debuggers-class/
 Para poder emular el sistema operativo de Raspberry Pi, es necesario descargar la imagen del sistema. Esta puede obtenerse desde la página oficial de Raspberry Pi. La versión más reciente al momento de esta guía es: `2024-11-19-raspios-bookworm-armhf-lite.img`.
 Alternativamente, se puede descargar de manera manual en la pagina oficial de `Raspberry Pi` dentro del directorio `emulators-debuggers-class/demo/qemu` o mediante una terminal. 
 
-🔗 [Descargar desde la página oficial](https://www.raspberrypi.com/software/operating-systems/)
+🔗 [Descargar desde la página oficial](https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/)
 
 <p align="center">
   <img src="images/rasbian_lite_instalar.png"  width="800"/>
@@ -270,9 +270,14 @@ cd ~/emulators-debuggers-class/demo/qemu
 ```
 
 Luego instalar y descomprimir la imagen (puede tardar un poco, dependiendo de la conexion de internet)
+
+Para instalar:
 ```bash
-wget https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-11-19/2024-11-19-raspios-bookworm-arm64-lite.img.xz
-xz -dk 2024-11-19-raspios-bookworm-arm64-lite.img.xz
+wget https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz
+```
+Para descomprimir: 
+```bash
+xz -dk 2024-11-19-raspios-bookworm-armhf-lite.img.xz
 ```
 
 ## Paso 4: Verificar instalaciones antes de la emulación
@@ -329,11 +334,11 @@ Estos parámetros tienen un significado que configuran al dispositivo a emular.
 | `-hda`           | Imagen del sistema Raspberry Pi OS Lite que se monta como disco principal.                                                                             |
 
 
-**Nota**: La imagen utilizada (2024-11-19-raspios-bookworm-armhf-lite.img) en este entorno inicia en modo shell (init=/bin/sh), útil para debugging o configuraciones avanzadas. Para arrancar el sistema completo, puedes cambiar esa línea por:
-
-```plaintext
--append "root=/dev/sda2 rootfstype=ext4 rw console=ttyAMA0"
-```
+>**Nota**: La imagen utilizada (2024-11-19-raspios-bookworm-armhf-lite.img) en este entorno inicia en modo shell (init=/bin/sh), útil para debugging o configuraciones avanzadas. Para arrancar el sistema completo, puedes cambiar esa línea por:
+>
+>```plaintext
+>append "root=/dev/sda2 rootfstype=ext4 rw console=ttyAMA0"
+>```
 
 
 
