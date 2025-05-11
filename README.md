@@ -921,9 +921,72 @@ El siguiente script es una utilidad ligera escrita en Assembler que muestra info
 
 En la terminal de  Qemu, se debe acceder al directorio `home/pi` de esta manera `cd home/pi`. Luego se debe ejecutar, lo siguiente (Este es el código a depurar).  
 ```bash
-echo '.section .data\ntitulo: .asciz "---------------------GENERAL INFORMATION------------------\n"\nso_info: .asciz "Sistema Operativo : Raspbian GNU/Linux 12 (bookworm)\n"\nkernel_info: .asciz "Versión del kernel: 4.19.50+\n"\narch_info: .asciz "Arquitectura      : armv6l\n"\n\n.section .text\n.global _start\n\n_start:\n\nprint_titulo:\n    mov r0, #1              // stdout\n    ldr r1, =titulo         // puntero al mensaje\n    mov r2, #58             // longitud\n    mov r7, #4              // syscall write\n    swi 0\n\nprint_so:\n    mov r0, #1\n    ldr r1, =so_info\n    mov r2, #55\n    mov r7, #4\n    swi 0\n\nprint_kernel:\n    mov r0, #1\n    ldr r1, =kernel_info\n    mov r2, #30\n    mov r7, #4\n    swi 0\n\nprint_arch:\n    mov r0, #1\n    ldr r1, =arch_info\n    mov r2, #26\n    mov r7, #4\n    swi 0\n\nexit_program:\n    mov r0, #0\n    mov r7, #1\n    swi 0' > /home/pi/info.asm
+echo '.section .data\ntitulo: .asciz "---------------------GENERAL INFORMATION------------------\\n"\nso_info: .asciz "Sistema Operativo : Raspbian GNU/Linux 12 (bookworm)\\n"\nkernel_info: .asciz "Versión del kernel: 4.19.50+\\n"\narch_info: .asciz "Arquitectura      : armv6l\\n"\n\n.section .text\n.global _start\n\n_start:\n\nprint_titulo:\n    mov r0, #1\n    ldr r1, =titulo\n    mov r2, #58\n    mov r7, #4\n    swi 0\n\nprint_so:\n    mov r0, #1\n    ldr r1, =so_info\n    mov r2, #55\n    mov r7, #4\n    swi 0\n\nprint_kernel:\n    mov r0, #1\n    ldr r1, =kernel_info\n    mov r2, #30\n    mov r7, #4\n    swi 0\n\nprint_arch:\n    mov r0, #1\n    ldr r1, =arch_info\n    mov r2, #26\n    mov r7, #4\n    swi 0\n\nexit_program:\n    mov r0, #0\n    mov r7, #1\n    swi 0' > /home/pi/info.asm
 ```
 > A este punto se debe haber creado el script llamado `info.asm`, se puede verificar haciendo un  `ls` en la terminal.
+
+### Explicación del Codigo  `info.asm`
+ ```bash
+.section .data                      // Sección de datos: aquí van los textos a mostrar
+
+titulo: .asciz "---------------------GENERAL INFORMATION------------------\n"
+// Mensaje de título, cadena terminada en cero con salto de línea al final
+
+so_info: .asciz "Sistema Operativo : Raspbian GNU/Linux 12 (bookworm)\n"
+// Información del sistema operativo
+
+kernel_info: .asciz "Versión del kernel: 4.19.50+\n"
+// Versión del kernel
+
+arch_info: .asciz "Arquitectura      : armv6l\n"
+// Arquitectura del procesador
+
+.section .text                     // Sección de código
+
+.global _start                     // Declaramos la etiqueta de inicio como global
+
+_start:
+
+// --- Imprimir el título ---
+print_titulo:
+    mov r0, #1              // r0 = 1 (stdout)
+    ldr r1, =titulo         // r1 = dirección de la cadena 'titulo'
+    mov r2, #58             // r2 = longitud del mensaje
+    mov r7, #4              // r7 = syscall número 4 (write)
+    swi 0                   // Interrupción para llamar al sistema
+
+// --- Imprimir información del sistema operativo ---
+print_so:
+    mov r0, #1              // stdout
+    ldr r1, =so_info        // dirección de la cadena
+    mov r2, #55             // longitud de la cadena
+    mov r7, #4              // syscall write
+    swi 0
+
+// --- Imprimir versión del kernel ---
+print_kernel:
+    mov r0, #1
+    ldr r1, =kernel_info
+    mov r2, #30
+    mov r7, #4
+    swi 0
+
+// --- Imprimir arquitectura ---
+print_arch:
+    mov r0, #1
+    ldr r1, =arch_info
+    mov r2, #26
+    mov r7, #4
+    swi 0
+
+// --- Salir del programa ---
+exit_program:
+    mov r0, #0              // Código de salida 0 (sin errores)
+    mov r7, #1              // syscall número 1 (exit)
+    swi 0
+ ```
+
+
 
 
 ### Paso 6.3: Depuración
@@ -963,10 +1026,10 @@ El script llamado `info.asm`, presenta una serie de errores, que deben ser corre
 
 
 ---
-Para ensamblar el codigo con las bandera de depuración, se deben aplicar las siguientes banderas:
+Para ensamblar el codigo con las banderas de depuración, se deben aplicar el siguiente ensamble:
 
 ```bash
-as -g -o info.o /home/pi/info.asm
+as -g -o info.o info.asm
 ```
 
 ```bash
@@ -983,22 +1046,22 @@ Para depurar:
 gdb ./info
 ```
 
-Una vez dentro de GDB, lo primero siempre es definir los breakpoints dados por las etiquetas de la siguiente manera:
+Una vez dentro de GDB, lo primero siempre es definir los breakpoints, puedes empezar con estos:
 
 ```bash
-(gdb) break _start
+break _start
 ```
 ```bash
-(gdb) break print_titulo
+break print_titulo
 ```
 ```bash
-(gdb) break print_os
+break print_so
 ```
 ```bash
-(gdb) break print_kernel
+break print_kernel
 ```
 ```bash
-(gdb) break print_arch
+break print_arch
 ```
 
 5. Depuración interactiva
@@ -1009,7 +1072,7 @@ Puedes ir revisando los registros y la memoria, o incluso ir paso por paso, con 
  info registers
 ```
 
-- x/10xw $sp: Ver el contenido de un registro en hexadecimal.
+- x/c 0x<reg>: Ver el contenido de un registro en hexadecimal.
 ```bash
 x/c 0x<reg>
 ```
@@ -1018,13 +1081,15 @@ x/c 0x<reg>
 step
 ```
 ---
-- Reto a: ERROR 1 (¿El salto de linea es así?)
+### Retos de la Depuración
+
+- Reto a: ERROR 1 (Hint: ¿Cuántos Bytes necesito para imprimir la cadena?)
  
-- Reto b: ERROR 2 (¿El salto de linea es así?)
+- Reto b: ERROR 2 (Hint: ¿Cuántos Bytes necesito para imprimir la cadena?)
 
-- Reto c: ERROR 3 (¿El salto de linea es así?)
+- Reto c: ERROR 3 (Hint: ¿Cuántos Bytes necesito para imprimir la cadena?)
 
-- Reto d: ERROR 4 (¿El salto de linea es así?)
+- Reto d: ERROR 4 (Hint: ¿Cuántos Bytes necesito para imprimir la cadena?)
 
 
 ---
