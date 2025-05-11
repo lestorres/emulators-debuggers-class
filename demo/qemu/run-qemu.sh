@@ -7,4 +7,4 @@ qemu-system-arm \
   -no-reboot \
   -serial stdio \
   -append "root=/dev/sda2 rootfstype=ext4 rw console=ttyAMA0 init=/bin/sh"  \
-  -hda 2024-11-19-raspios-bookworm-arm64-lite.img
+  -hda 2024-11-19-raspios-bookworm-armhf-lite.img
