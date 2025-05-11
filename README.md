@@ -207,7 +207,6 @@ La siguiente tabla describe el hardware virtual que se emulará con QEMU para co
 sudo apt update
 sudo apt install qemu-system-arm
 sudo apt install qemu-utils
-sudo apt install qemu-efi
 ```
 ### Paso 2: Clonar el Repositorio `emulators-debuggers-class`.
 El repositorio completo contiene la siguiente estructura: 
@@ -340,10 +339,6 @@ Estos parámetros tienen un significado que configuran al dispositivo a emular.
 >append "root=/dev/sda2 rootfstype=ext4 rw console=ttyAMA0"
 >```
 
-
-
-
-
 ## Paso 5: A emular
 
 Primero se le deben dar permisos al ejecutable `run-qemu.sh`.
@@ -434,8 +429,14 @@ Al no tener interfaz gráfica, se trabaja con editores en terminal. Uno de los m
 |           | `:syntax on` / `:syntax off`   | Activar / desactivar resaltado |
 
 Para empezar a editar un archivo desde la terminal:
+
 ```bash
-vi archivo.py
+echo 'print("============0============")\nprint("============0============")\nprint("============0============")\nprint("        hola mundo       ")\nprint("============0============")\nprint("============0============")\nprint("============0============")' > /home/pi/hola.py
+```
+
+
+```bash
+vi hola.py
 ```
 Despliega en esta caso, el programa (En este caso se creo un "Hola mundo") :
 
@@ -443,6 +444,9 @@ Despliega en esta caso, el programa (En este caso se creo un "Hola mundo") :
   <img src="images/vi_hola_py.png"  width="500"/>
 </p>
 
+```bash
+python3 hola.py
+```
 
 ### 📀 Paso 6.2: Código a Depurar 
 
@@ -501,6 +505,17 @@ El script llamado `pyfetch.py`, presenta una serie de errores, que deben ser cor
 | `help`            | Muestra ayuda general o de un comando específico (`help p`)            |
 
 ---
+
+Para correr el script:
+```bash
+python3 pyfetch.py
+```
+
+Para edirtar el script:
+```bash
+vi pyfetch.py
+```
+
 Para depurar se deben aplicar las siguientes banderas:
 ```bash
 python3 -m pdb pyfetch.py
@@ -564,9 +579,11 @@ La siguiente tabla describe el hardware virtual que se emulará con QEMU para co
 
 Desde una terminal, ejecuta los siguientes comandos:
 
+### Paso 1: Desde una terminal se deben instalar los siguientes paquetes:
 ```bash
 sudo apt update
-sudo apt install qemu-system-arm qemu-efi
+sudo apt install qemu-system-arm
+sudo apt install qemu-utils
 ```
 
 ### Paso 2: Clonar el Repositorio `emulators-debuggers-class`.
@@ -579,17 +596,12 @@ emulators-debuggers-class/
   │   └── solucion/
   ├── images/
   ├── demo/
-  │   ├── pdb/
-  │   │   ├── pyfetch.py
-  │   │   └── pyfetch_2_0.py
   │   └── qemu/
   │       ├── run-qemu.sh
   │       └── qemu-rpi/
   │           ├── kernel-qemu-4.19.50-buster
   │           └── versatile-pb.dtb
   └── tutorial/
-        ├── practica_c_gdb
-        ├── practica_bonus_asm
         ├── plantilla_tutorial
         └── practica_qemu 
               ├── run-qemu.sh
@@ -602,10 +614,8 @@ A nivel de este tutorial guía, nos vamos a enfocar en el directorio `tutorial`.
 
 ```
 emulators-debuggers-class/
-  ├── tutorial/
-        ├── practica_c_gdb
+  └── tutorial/
         ├── plantilla_tutorial
-        ├── practica_bonus_asm
         └── practica_qemu 
               ├── run-qemu.sh
               └── qemu-rpi/
@@ -618,7 +628,7 @@ emulators-debuggers-class/
 Para poder emular el sistema operativo de Raspberry Pi, es necesario descargar la imagen del sistema. Esta puede obtenerse desde la página oficial de Raspberry Pi. La versión más reciente al momento de esta guía es: `2024-11-19-raspios-bookworm-armhf-lite.img`.
 Alternativamente, se puede descargar de manera manual en la pagina oficial de `Raspberry Pi` dentro del directorio `emulators-debuggers-class/tutorial/qemu` o mediante una terminal. 
 
-🔗 [Descargar desde la página oficial](https://www.raspberrypi.com/software/operating-systems/)
+🔗 [Descargar desde la página oficial](https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/)
 
 <p align="center">
   <img src="images/rasbian_lite_instalar.png"  width="800"/>
@@ -626,17 +636,21 @@ Alternativamente, se puede descargar de manera manual en la pagina oficial de `R
 
 🔗 Mediante una terminal 
 
-Se debe ingresar dentro del directorio `tutorial/qemu`
+Se debe ingresar dentro del directorio demo/qemu
 ```bash
 cd ~/emulators-debuggers-class/tutorial/qemu
 ```
 
 Luego instalar y descomprimir la imagen (puede tardar un poco, dependiendo de la conexion de internet)
-```bash
-wget https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-11-19/2024-11-19-raspios-bookworm-arm64-lite.img.xz
-xz -dk 2024-11-19-raspios-bookworm-arm64-lite.img.xz
-```
 
+Para instalar:
+```bash
+wget https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz
+```
+Para descomprimir: 
+```bash
+xz -dk 2024-11-19-raspios-bookworm-armhf-lite.img.xz
+```
 ## Paso 4: Verificar instalaciones antes de la emulación
 
 Para este punto dentro del directorio `emulators-debuggers-class/tutorial/qemu` debería contener:
@@ -907,8 +921,7 @@ El siguiente script es una utilidad ligera escrita en Assembler que muestra info
 
 En la terminal de  Qemu, se debe acceder al directorio `home/pi` de esta manera `cd home/pi`. Luego se debe ejecutar, lo siguiente (Este es el código a depurar).  
 ```bash
-echo '.section .data\ntitulo: .asciz "---------------------GENERAL INFORMATION------------------\n"\nso_info: .asciz "Sistema Operativo : Raspbian GNU/Linux 12 (bookworm)\n"\nkernel_info: .asciz "Versión del kernel: 4.19.50+\n"\narch_info: .asciz "Arquitectura      : armv6l\n"\n\n.section .text\n.global _start\n\n_start:\n\nprint_titulo:\n    mov r0, #1              // stdout\n    ldr r1, =titulo         // puntero al mensaje\n    mov r2, #60             // longitud\n    mov r7, #4              // syscall write\n    swi 0\n\nprint_so:\n    mov r0, #1\n    ldr r1, =so_info\n    mov r2, #54\n    mov r7, #4\n    swi 0\n\nprint_kernel:\n    mov r0, #1\n    ldr r1, =kernel_info\n    mov r2, #31\n    mov r7, #4\n    swi 0\n\nprint_arch:\n    mov r0, #1\n    ldr r1, =arch_info\n    mov r2, #28\n    mov r7, #4\n    swi 0\n\nexit_program:\n    mov r0, #0\n    mov r7, #1\n    swi 0' > /home/pi/info.asm
-
+echo '.section .data\ntitulo: .asciz "---------------------GENERAL INFORMATION------------------\n"\nso_info: .asciz "Sistema Operativo : Raspbian GNU/Linux 12 (bookworm)\n"\nkernel_info: .asciz "Versión del kernel: 4.19.50+\n"\narch_info: .asciz "Arquitectura      : armv6l\n"\n\n.section .text\n.global _start\n\n_start:\n\nprint_titulo:\n    mov r0, #1              // stdout\n    ldr r1, =titulo         // puntero al mensaje\n    mov r2, #58             // longitud\n    mov r7, #4              // syscall write\n    swi 0\n\nprint_so:\n    mov r0, #1\n    ldr r1, =so_info\n    mov r2, #55\n    mov r7, #4\n    swi 0\n\nprint_kernel:\n    mov r0, #1\n    ldr r1, =kernel_info\n    mov r2, #30\n    mov r7, #4\n    swi 0\n\nprint_arch:\n    mov r0, #1\n    ldr r1, =arch_info\n    mov r2, #26\n    mov r7, #4\n    swi 0\n\nexit_program:\n    mov r0, #0\n    mov r7, #1\n    swi 0' > /home/pi/info.asm
 ```
 > A este punto se debe haber creado el script llamado `info.asm`, se puede verificar haciendo un  `ls` en la terminal.
 
@@ -959,6 +972,12 @@ as -g -o info.o /home/pi/info.asm
 ```bash
 ld -g -o info info.o
 ```
+
+```bash
+./info
+```
+
+Para depurar: 
 
 ```bash
 gdb ./info
