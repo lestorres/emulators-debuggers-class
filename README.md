@@ -45,12 +45,45 @@ Esta guía se centra en el uso de herramientas **open source** como emuladores y
 - **Emulación**: útil para **pruebas funcionales, depuración y validación sin hardware**.
 
 
-## Modelos y pruebas avanzadas
+## Conceptos, Modelos y Pruebas avanzadas
 
 - **Hardware-in-the-Loop (HIL)**: Pruebas con hardware real o parcialmente simulado.
   > Ejemplo: Probar un firmware en una placa real conectada a un modelo simulado de sensores.
 - **Gemelo Digital (Digital Twin)**: Réplica virtual del sistema físico usada para pruebas y validaciones.
   > Ejemplo: Un gemelo digital de un motor industrial permite ajustar parámetros sin detener la producción.
+- **Depuración en Circuito (In-Circuit Debugging)**: Técnica que permite monitorear y controlar un microcontrolador mientras ejecuta código real en su **entorno físico**.
+  >Permite: 1) Colocar breakpoints (puntos de interrupción). 2) Leer/modificar registros o memoria. 3) Ejecutar paso a paso.
+  >
+  >Ejemplo: Uso de un depurador como PICkit, MPLAB ICD 4 para PIC/dsPIC o J-Link  (universal para ARM Cortex-M, etc) para examinar registros internos y flujos de ejecución.
+  
+    - Protocolos e Interfaces de Depuración:
+
+        - **JTAG (Joint Test Action Group)**: Protocolo estándar para acceder a registros y depurar en bajo nivel.
+            > Es una interfaz de depuración estándar usada ampliamente en microcontroladores y FPGAs.
+            > 
+            > Permite: 1) Programación del chip 2) Acceso al núcleo del procesador 3) Control de ejecución y diagnóstico a bajo nivel.
+            > 
+            > Ventaja: Acceso completo a registros internos, incluso sin firmware funcionando bien.
+        - **SWD (Serial Wire Debug)**: es una interfaz de depuración serial desarrollada por ARM como alternativa más sencilla y moderna al tradicional JTAG.
+
+- **MPLAB**: Herramienta oficial de Microchip para depurar microcontroladores PIC, AVR, SAM, etc. Incluye soporte para visualización gráfica y análisis de registros.
+<p align="center">
+  <img src="images/MPLAB.png"  width="500"/>
+</p>
+
+#### **🧠Eclipse para depuración avanzada**
+Eclipse es un IDE extensible de código abierto, muy usado en desarrollo de software, pero también muy potente cuando se combina con herramientas de bajo nivel para sistemas embebidos y desarrollo con microcontroladores.
+
+> Un IDE **(Integrated Development Environment) o Entorno de Desarrollo Integrado**: es una aplicación que reúne en un solo lugar todo lo que necesitas para escribir, compilar, depurar y cargar tu código en un dispositivo o programa.
+
+  - 🔧 ¿Por qué usar Eclipse para depurar hardware?
+    -  Es modular y personalizable mediante plugins.
+  
+    - Tiene soporte para GDB (GNU Debugger), usado ampliamente en compiladores como GCC.
+  
+    - Se puede integrar con herramientas como OpenOCD y J-Link GDB Server para trabajar con JTAG/SWD.
+  
+    - Muchos fabricantes lo adoptan como base para sus IDEs personalizados (STM32CubeIDE, NXP MCUXpresso, etc).
 
 
 ## Prácticas industriales 
@@ -60,10 +93,10 @@ Esta guía se centra en el uso de herramientas **open source** como emuladores y
 | Toolchains cruzadas               | Compilar/depurar desde PC para microcontroladores o sistemas embebidos objetivo. |
 | Scripts de GDB (.gdbinit)         | Automatizar flujos repetitivos en debugging, ya sea hacerlos o usarlos.    |
 | CI/CD con QEMU + GDB              | Pruebas de Integración Continua y Despliegue Continuo de firmware sin hardware real.    |
-| Interfaces JTAG/SWD               | Depuración física de microcontroladores (MCUs y SoCs).                     |
+| Interfaces JTAG/SWD               | Depuración física de microcontroladores (Eclipse, MCUs y SoCs).            |
 | Trazas (ej. Tracealyzer, ITM)     | Análisis de eventos y tiempos en RTOS o sistemas críticos.                 |
 | Breakpoints                       | Breakpoints en desarrollo, son puntos claves del codigo para analizar.     |
-| Optimización vs Depuración        | Uso de flags como `-Og` para depurar código optimizado, es decur, saber cómo las optimizaciones afectan la visibilidad del código al depurar.|
+| Optimización vs Depuración        | Uso de flags como `-Og` para depurar código optimizado, es decIr, saber cómo las optimizaciones afectan la visibilidad del código al depurar.|
 | Análisis post-mortem (core dumps) | Inspección de fallos ya ocurridos.                                        |
 
 
@@ -359,7 +392,7 @@ Se debería desplegar una ventana como esta,
   <img src="images/emular_rasp.png"  width="800"/>
 </p>
 
-Pero lo importante está en la terminal, esta versión de Raspberry OS no cuenta con interfaz gráfica, pero si con Python, G++ y GDB integrados.
+Pero lo importante está en la terminal, esta versión de Raspberry OS no cuenta con interfaz gráfica, pero si con Python, as y GDB integrados.
 
 ### ✅ Paso 5.1: Interactuar con el sistema
 En este momento, al estar dentro del sistema `Raspberry` OS Lite se puede interactuar de manera básica con el sistema de la siguiente manera: 
@@ -540,7 +573,7 @@ Este tutorial proporciona una guía paso a paso para emular un programa simple e
 
 ---
 
-### ✅ Prerrequisitos
+### ✅ Prerequisitos
 
 Asegúrate de contar con lo siguiente:
 
@@ -722,7 +755,7 @@ Se debería desplegar una ventana como esta,
   <img src="images/emular_rasp.png"  width="800"/>
 </p>
 
-Pero lo importante está en la terminal, esta versión de Raspberry OS no cuenta con interfaz gráfica, pero si con Python, G++ y GDB integrados. 
+Pero lo importante está en la terminal, esta versión de Raspberry OS no cuenta con interfaz gráfica, pero si con Python, as y GDB integrados. 
 
 ### ✅ Paso 5.1: Interactuar con el sistema
 En este momento, al estar dentro del sistema `Raspberry OS Lite` se puede interactuar de manera básica con el sistema de la siguiente manera: 
@@ -753,7 +786,7 @@ dmesg
 ```
 
 
-# 🔧 Parte II: Programar y Depurar en Ensamblador con `as` y GDB
+## 🔧 Parte II: Programar y Depurar en Ensamblador con `as` y GDB
 
 ### Paso 6: Familiarizarse con las herramientas de depuración
 Para esta sección, requerimos de 4 herramientas:
