@@ -68,7 +68,7 @@ Esta guía se centra en el uso de herramientas **open source** como emuladores y
 
 - **MPLAB**: Herramienta oficial de Microchip para depurar microcontroladores PIC, AVR, SAM, etc. Incluye soporte para visualización gráfica y análisis de registros.
 <p align="center">
-  <img src="images/MPLAB.png"  width="500"/>
+  <img src="images/mplab.png"  width="600"/>
 </p>
 
 #### **🧠Eclipse para depuración avanzada**
